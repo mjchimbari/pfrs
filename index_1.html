@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposal Defence — Feedback Response System | DUT FHS</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+:root{
+  --navy:#0D1B3E;--navy-mid:#1F3864;--navy-lt:#2E5096;
+  --gold:#C9A84C;--cream:#FAF7F2;--paper:#F4F0E8;
+  --red:#C0392B;--green:#1A6B3A;--green-lt:#E8F5EC;
+  --amber:#B7600A;--amber-lt:#FEF3E2;
+  --purple:#5B21B6;--purple-lt:#EDE9FE;
+  --smoke:#E8E4DC;--text:#1A1510;--muted:#6B6355;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Source Serif 4',Georgia,serif;background:var(--cream);color:var(--text);}
+h1,h2,h3,h4{font-family:'Playfair Display',serif;}
+.screen{display:none;}.screen.active{display:block;}
+/* Hero */
+.hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy-mid) 55%,var(--navy-lt) 100%);padding:48px 24px 40px;text-align:center;color:#fff;}
+.hero-sub{font-size:10px;letter-spacing:5px;text-transform:uppercase;opacity:.55;margin-bottom:14px;}
+.hero h1{font-size:28px;line-height:1.25;margin-bottom:10px;}
+.hero p{opacity:.6;font-size:14px;}
+.hero-rule{width:56px;height:3px;background:var(--gold);margin:20px auto 0;border-radius:2px;}
+/* Layout */
+.container{max-width:700px;margin:0 auto;padding:36px 20px 80px;}
+.container-wide{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
+/* Cards */
+.card{background:#fff;border-radius:12px;border:1.5px solid var(--smoke);box-shadow:0 2px 10px rgba(0,0,0,.05);}
+.card-pad{padding:28px 26px;}
+/* Buttons */
+.btn{cursor:pointer;border:none;border-radius:7px;padding:11px 22px;font-size:14px;font-weight:700;font-family:'Source Serif 4',serif;transition:filter .15s;display:inline-block;}
+.btn:hover{filter:brightness(1.08);}
+.btn-primary{background:var(--navy-mid);color:#fff;}
+.btn-ghost{background:var(--smoke);color:var(--navy-mid);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-amber{background:var(--amber);color:#fff;}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-block{width:100%;text-align:center;}
+.btn-sm{padding:7px 14px;font-size:13px;}
+/* Fields */
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px;letter-spacing:.6px;text-transform:uppercase;}
+.field input,.field textarea{width:100%;border:1.5px solid var(--smoke);border-radius:8px;padding:11px 14px;font-size:15px;font-family:'Source Serif 4',serif;outline:none;background:#fff;color:var(--text);transition:border-color .15s;}
+.field input:focus,.field textarea:focus{border-color:var(--navy-lt);}
+.field input[type=password]{letter-spacing:2px;}
+.field textarea{resize:vertical;line-height:1.75;}
+.field .err-msg{color:var(--red);font-size:12px;margin-top:4px;}
+.field input.has-error,.field textarea.has-error{border-color:var(--red);background:#FFF5F5;}
+/* Chips */
+.chip{display:inline-block;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap;}
+.chip-navy{background:var(--navy-mid);color:#fff;font-size:11px;}
+.chip-green{background:var(--green-lt);color:var(--green);}
+.chip-red{background:#FDE8E6;color:var(--red);}
+.chip-amber{background:var(--amber-lt);color:var(--amber);}
+.chip-smoke{background:var(--paper);color:var(--muted);}
+.chip-purple{background:var(--purple-lt);color:var(--purple);}
+/* Banners */
+.banner{border-radius:8px;padding:12px 16px;font-size:13px;line-height:1.7;margin-bottom:16px;}
+.banner-warn{background:var(--amber-lt);border:1px solid #E8901044;color:var(--amber);}
+.banner-info{background:#EEF4FF;border:1px solid #93C5FD44;color:#1E3A8A;}
+.banner-success{background:var(--green-lt);border:1px solid #1A6B3A44;color:var(--green);}
+.banner-error{background:#FEE2E2;border:1px solid #C0392B44;color:var(--red);}
+/* Tabs */
+.tab-bar{display:flex;background:var(--paper);border-radius:10px;padding:4px;border:1px solid var(--smoke);margin-bottom:24px;gap:4px;flex-wrap:wrap;}
+.tab-btn{flex:1;min-width:80px;padding:9px 6px;border-radius:8px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:13px;font-family:'Source Serif 4',serif;transition:all .15s;}
+.tab-btn.active{background:var(--navy-mid);color:#fff;font-weight:700;}
+/* Student items */
+.student-item{background:#fff;border-radius:10px;border:1.5px solid var(--smoke);box-shadow:0 2px 8px rgba(0,0,0,.04);padding:16px 20px;cursor:pointer;display:flex;align-items:center;gap:14px;flex-wrap:wrap;transition:box-shadow .15s,transform .1s;margin-bottom:12px;}
+.student-item:hover{box-shadow:0 6px 20px rgba(0,0,0,.10);transform:translateY(-1px);}
+/* Comment blocks */
+.comment-block{background:#fff;border-radius:10px;margin-bottom:18px;overflow:hidden;border:1.5px solid var(--smoke);box-shadow:0 2px 6px rgba(0,0,0,.04);}
+.comment-header{background:var(--paper);padding:12px 18px;border-bottom:1px solid var(--smoke);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.comment-body{padding:14px 18px;font-size:14px;line-height:1.85;color:var(--text);}
+.comment-response{padding:16px 18px;background:#FAFFFD;border-top:1px solid var(--smoke);}
+.comment-response.rebut-bg{background:#FFFCF5;}
+.toggle-wrap{display:flex;gap:8px;margin-bottom:14px;}
+.toggle-btn{flex:1;padding:9px 0;border-radius:7px;border:2px solid var(--smoke);background:#fff;color:var(--muted);cursor:pointer;font-size:13px;font-family:'Source Serif 4',serif;transition:all .15s;}
+.toggle-btn.active-green{border-color:var(--green);background:var(--green-lt);color:var(--green);font-weight:700;}
+.toggle-btn.active-amber{border-color:var(--amber);background:var(--amber-lt);color:var(--amber);font-weight:700;}
+.response-box{border-radius:8px;padding:12px 15px;margin-top:12px;}
+.response-box.addressed{background:var(--green-lt);border-left:3px solid var(--green);}
+.response-box.rebuttal{background:var(--amber-lt);border-left:3px solid var(--amber);}
+.response-box .rtype{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.response-box .rtext{font-size:13px;line-height:1.85;}
+.response-box .rloc{font-size:12px;color:var(--muted);border-top:1px solid rgba(0,0,0,.08);padding-top:8px;margin-top:4px;}
+/* Action bar */
+.action-bar{position:sticky;bottom:0;background:var(--cream);border-top:2px solid var(--smoke);padding:14px 20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;z-index:10;}
+/* Table */
+.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+.data-table th{background:var(--navy-mid);color:#fff;padding:10px 14px;text-align:left;font-size:12px;}
+.data-table td{padding:9px 14px;border-bottom:1px solid var(--smoke);}
+.data-table tr:nth-child(even) td{background:var(--paper);}
+/* Workflow bar */
+.workflow-bar{display:flex;align-items:center;margin:16px 0;background:var(--paper);border-radius:10px;padding:8px 16px;border:1px solid var(--smoke);}
+.workflow-step{flex:1;text-align:center;font-size:12px;font-weight:700;padding:6px 4px;border-radius:6px;transition:all .2s;}
+.workflow-step.done{background:var(--green);color:#fff;}
+.workflow-step.active{background:var(--navy-mid);color:#fff;}
+.workflow-step.pending{background:transparent;color:var(--muted);}
+.workflow-arrow{color:var(--smoke);font-size:16px;padding:0 4px;}
+/* Upload */
+.upload-area{border:2px dashed var(--smoke);border-radius:10px;padding:24px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#fff;margin-top:8px;}
+.upload-area:hover,.upload-area.drag-over{border-color:var(--navy-lt);background:#EEF4FF;}
+.upload-area.has-file{border-color:var(--green);background:var(--green-lt);border-style:solid;}
+.upload-area input[type=file]{display:none;}
+/* Dash */
+.dash-header{background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:0 0 20px 20px;padding:28px 30px;margin-bottom:26px;color:#fff;}
+.dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;}
+.stat-card{background:rgba(255,255,255,.1);border-radius:10px;padding:14px;text-align:center;}
+.stat-val{font-size:26px;font-weight:700;font-family:monospace;}
+.stat-label{font-size:11px;opacity:.6;margin-top:4px;}
+/* Help */
+.help-btn{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--navy-mid);color:#fff;border:none;font-size:22px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:900;transition:transform .15s;}
+.help-btn:hover{transform:scale(1.1);}
+.help-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:910;}
+.help-overlay.open{display:block;}
+.help-panel{position:fixed;top:0;right:-440px;width:420px;height:100vh;background:#fff;z-index:920;box-shadow:-4px 0 24px rgba(0,0,0,.15);transition:right .3s ease;display:flex;flex-direction:column;overflow:hidden;}
+.help-panel.open{right:0;}
+.help-hdr{background:linear-gradient(135deg,var(--navy),var(--navy-mid));padding:20px 22px;color:#fff;flex-shrink:0;position:relative;}
+.help-hdr h2{font-size:18px;margin-bottom:4px;}
+.help-hdr p{font-size:12px;opacity:.6;}
+.help-close{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;}
+.help-tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--smoke);flex-shrink:0;}
+.help-tab{flex:1;padding:10px 4px;border:none;background:transparent;font-size:12px;cursor:pointer;font-family:'Source Serif 4',serif;color:var(--muted);border-bottom:2px solid transparent;}
+.help-tab.active{color:var(--navy-mid);font-weight:700;border-bottom-color:var(--gold);}
+.help-body{padding:18px 20px;overflow-y:auto;flex:1;}
+.help-section{margin-bottom:20px;}
+.help-section h3{font-size:14px;color:var(--navy-mid);margin-bottom:10px;font-family:'Playfair Display',serif;}
+.help-section ol,.help-section ul{padding-left:18px;}
+.help-section li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:4px;}
+.help-section li strong{color:var(--navy-mid);}
+.help-tip{background:var(--amber-lt);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--amber);margin-top:8px;line-height:1.7;}
+hr.hdiv{border:none;border-top:1px solid var(--smoke);margin:16px 0;}
+.flex-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.text-muted{color:var(--muted);font-size:13px;}
+.text-small{font-size:12px;}
+.mt8{margin-top:8px;}
+@media(max-width:600px){.dash-stats{grid-template-columns:repeat(2,1fr);}.hero h1{font-size:22px;}.help-panel{width:100%;right:-100%;}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.fade{animation:fadeIn .25s ease both;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="screen-login" class="screen active">
+  <div class="hero">
+    <div class="hero-sub">Durban University of Technology</div>
+    <h1>Proposal Defence<br>Feedback Response System</h1>
+    <p>Faculty of Health Sciences &nbsp;·&nbsp; DUT</p>
+    <div class="hero-rule"></div>
+  </div>
+  <div class="container">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchLoginTab(&#39;student&#39;,this)">🎓 Student</button>
+      <button class="tab-btn" onclick="switchLoginTab(&#39;supervisor&#39;,this)">👨‍🏫 Supervisor</button>
+      <button class="tab-btn" onclick="switchLoginTab(&#39;chair&#39;,this)">🔑 Chair / Coord</button>
+    </div>
+    <div id="login-student" class="fade">
+      <div class="card card-pad">
+        <h2 style="font-size:20px;color:var(--navy-mid);margin-bottom:6px">Student Sign In</h2>
+        <p class="text-muted" style="margin-bottom:22px;line-height:1.7">Enter your student number and the password from your feedback letter.</p>
+        <div class="field"><label>Student Number</label><input id="s-number" type="text" placeholder="e.g. 25127955"><div class="err-msg" id="err-sno"></div></div>
+        <div class="field"><label>Password</label><input id="s-password" type="password" placeholder="Your password"><div class="err-msg" id="err-spwd"></div></div>
+        <button class="btn btn-primary btn-block" onclick="studentLogin()">Sign In →</button>
+
+      </div>
+    </div>
+    <div id="login-supervisor" style="display:none" class="fade">
+      <div class="card card-pad">
+        <h2 style="font-size:20px;color:var(--navy-mid);margin-bottom:6px">Supervisor Sign In</h2>
+        <p class="text-muted" style="margin-bottom:22px;line-height:1.7">Review your students' responses and approve or return them before they proceed to faculty.</p>
+        <div class="field"><label>Supervisor ID</label><input id="sup-user" type="text" placeholder="e.g. SUP001"><div class="err-msg" id="err-supu"></div></div>
+        <div class="field"><label>Password</label><input id="sup-pass" type="password" placeholder="Supervisor password"><div class="err-msg" id="err-supp"></div></div>
+        <button class="btn btn-primary btn-block" onclick="supervisorLogin()">Sign In →</button>
+
+      </div>
+    </div>
+    <div id="login-chair" style="display:none" class="fade">
+      <div class="card card-pad">
+        <h2 style="font-size:20px;color:var(--navy-mid);margin-bottom:6px">Chair / Admin Sign In</h2>
+        <p class="text-muted" style="margin-bottom:22px;line-height:1.7">Access the full dashboard, manage credentials, and download PDF response records.</p>
+        <div class="field"><label>Username</label><input id="c-user" type="text" placeholder="chair or coord"><div class="err-msg" id="err-cu"></div></div>
+        <div class="field"><label>Password</label><input id="c-pass" type="password" placeholder="Admin password"><div class="err-msg" id="err-cp"></div></div>
+        <button class="btn btn-primary btn-block" onclick="chairLogin()">Access Dashboard →</button>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT FORM -->
+<div id="screen-student" class="screen">
+  <div id="student-header"></div>
+  <div id="student-form" style="max-width:800px;margin:0 auto;padding:0 16px 8px"></div>
+  <div id="upload-section" style="max-width:800px;margin:0 auto;padding:0 16px 8px;display:none">
+    <div class="card" style="padding:18px 20px;border-left:5px solid var(--navy-lt)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <span style="font-size:20px">📎</span>
+        <h3 style="font-size:15px;color:var(--navy-mid)">Upload Revised Proposal <span style="color:var(--red);font-size:12px">* Required</span></h3>
+      </div>
+      <p class="text-muted" style="font-size:13px;margin-bottom:12px;line-height:1.7">Attach your revised proposal showing all tracked changes. Accepted: PDF, Word (.docx), ZIP · Max 20 MB.</p>
+      <div class="upload-area" id="upload-drop-zone" onclick="document.getElementById(&#39;proposal-file&#39;).click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
+        <input type="file" id="proposal-file" accept=".pdf,.doc,.docx,.zip" onchange="handleFileSelect(this)">
+        <div id="upload-placeholder"><div style="font-size:28px;margin-bottom:6px">📄</div><div style="font-size:14px;font-weight:700;color:var(--navy-mid)">Click to browse or drag and drop</div><div style="font-size:12px;color:var(--muted)">PDF · Word · ZIP · Max 20 MB</div></div>
+        <div id="upload-preview" style="display:none"><div style="font-size:28px;margin-bottom:6px">✅</div><div style="font-size:14px;font-weight:700;color:var(--green)" id="upload-filename"></div><div style="font-size:12px;color:var(--muted)" id="upload-filesize"></div><button onclick="removeFile(event)" style="margin-top:8px;background:var(--red);color:#fff;border:none;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:12px">Remove ✕</button></div>
+      </div>
+      <div class="err-msg" id="err-upload" style="margin-top:6px"></div>
+    </div>
+  </div>
+  <div class="action-bar" id="student-action-bar">
+    <svg id="action-ring" width="44" height="44" viewBox="0 0 44 44" style="flex-shrink:0"></svg>
+    <span id="action-label" style="flex:1;font-size:13px;color:var(--muted)"></span>
+    <span id="autosave-ind" style="font-size:12px;color:var(--green);opacity:0;transition:opacity .4s">✓ Saved</span>
+    <button class="btn btn-ghost btn-sm" onclick="saveDraft()">Save Draft</button>
+    <button class="btn btn-primary" onclick="submitResponses()">Submit to Supervisor →</button>
+  </div>
+</div>
+
+<!-- STUDENT STATUS -->
+<div id="screen-submitted" class="screen">
+  <div style="max-width:680px;margin:0 auto;padding:60px 20px;text-align:center" class="fade">
+    <div id="status-icon" style="width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:40px"></div>
+    <h2 id="status-title" style="color:var(--navy-mid);margin-bottom:12px"></h2>
+    <p id="submit-summary" class="text-muted" style="line-height:1.9;margin-bottom:8px"></p>
+    <p id="submit-time" style="font-size:13px;color:var(--muted);margin-bottom:20px"></p>
+    <div id="workflow-status-bar" style="margin-bottom:20px"></div>
+    <div id="file-submitted-box" style="display:none;align-items:center;gap:12px;background:var(--green-lt);border:1px solid var(--green);border-radius:8px;padding:12px 16px;margin-bottom:20px;text-align:left">
+      <span style="font-size:24px">📎</span>
+      <div><div style="font-size:13px;font-weight:700;color:var(--green)">Revised Proposal Submitted</div><div style="font-size:12px;color:var(--muted)" id="file-submitted-name"></div></div>
+    </div>
+    <div id="return-note-box" style="display:none;background:#FEE2E2;border-radius:10px;padding:16px 20px;text-align:left;margin-bottom:20px;border:1.5px solid var(--red)">
+      <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">📋 Supervisor feedback — revision needed</div>
+      <p id="return-note-text" style="font-size:14px;line-height:1.8;color:var(--text)"></p>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="signOut()">Sign Out</button>
+      <button id="revise-btn" class="btn btn-primary" style="display:none" onclick="reopenForRevision()">Revise &amp; Resubmit →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUPERVISOR DASHBOARD -->
+<div id="screen-supervisor" class="screen">
+  <div id="sup-content"></div>
+</div>
+
+<!-- CHAIR/COORD DASHBOARD -->
+<div id="screen-chair" class="screen">
+  <div class="dash-header">
+    <div class="flex-between" style="margin-bottom:16px">
+      <div><h1 style="font-size:24px;margin-bottom:4px" id="chair-title">Dashboard</h1><p style="opacity:.55;font-size:13px">Faculty of Health Sciences · DUT · 2026</p></div>
+      <button class="btn btn-sm" style="background:rgba(255,255,255,.12);color:#fff;border:none" onclick="signOut()">Sign Out</button>
+    </div>
+    <div class="dash-stats" id="chair-stats"></div>
+  </div>
+  <div class="container-wide">
+    <div class="tab-bar" id="chair-tab-bar"></div>
+    <div id="chair-tab-content"></div>
+  </div>
+</div>
+
+<!-- STUDENT DETAIL (chair view) -->
+<div id="screen-detail" class="screen">
+  <div id="detail-content" style="max-width:860px;margin:0 auto;padding:0 16px 64px"></div>
+</div>
+
+<!-- HELP BUTTON -->
+<button class="help-btn" onclick="openHelp()" title="Help &amp; Instructions">❓</button>
+<div class="help-overlay" id="help-overlay" onclick="closeHelp()"></div>
+<div class="help-panel" id="help-panel">
+  <div class="help-hdr">
+    <button class="help-close" onclick="closeHelp()">✕</button>
+    <h2>Help &amp; Instructions</h2>
+    <p>Step-by-step guide for all users</p>
+  </div>
+  <div class="help-tabs">
+    <button class="help-tab active" onclick="switchHelpTab(&#39;student&#39;,this)">🎓 Student</button>
+    <button class="help-tab" onclick="switchHelpTab(&#39;supervisor&#39;,this)">👨‍🏫 Supervisor</button>
+    <button class="help-tab" onclick="switchHelpTab(&#39;coord&#39;,this)">🏛 Chair/Coord</button>
+    <button class="help-tab" onclick="switchHelpTab(&#39;faq&#39;,this)">❓ FAQ</button>
+  </div>
+  <div class="help-body">
+    <div id="help-student">
+      <div class="help-section">
+        <h3>Submitting Your Responses</h3>
+        <ol>
+          <li><strong>Sign in</strong> with your student number and the password from your feedback letter.</li>
+          <li>All reviewer comments for your proposal are shown one by one.</li>
+          <li>For each <strong>★ Required</strong> comment:
+            <ul>
+              <li>The <strong>✓ I have addressed this</strong> button is pre-selected — keep it if you made the change.</li>
+              <li>Click <strong>↩ I wish to rebut this</strong> if you disagree with the comment.</li>
+              <li>Write your explanation in the response field.</li>
+              <li>Write the exact page and section reference in the location field.</li>
+            </ul>
+          </li>
+          <li>Your work is <strong>saved automatically</strong> as you type.</li>
+          <li>Scroll down and <strong>upload your revised proposal</strong> (PDF, Word or ZIP · max 20 MB). This is required.</li>
+          <li>Click <strong>Submit to Supervisor →</strong></li>
+        </ol>
+        <div class="help-tip"><strong>Tip:</strong> Comments marked "✓ For information only" do not need a response.</div>
+      </div>
+      <hr class="hdiv">
+      <div class="help-section">
+        <h3>If Your Supervisor Returns Your Responses</h3>
+        <ol>
+          <li>Log in — a red banner shows your supervisor's written feedback.</li>
+          <li>Click <strong>Revise &amp; Resubmit →</strong> — your previous responses are still there.</li>
+          <li>Make changes, re-upload your proposal if needed, and submit again.</li>
+          <li>This loop repeats until your supervisor approves.</li>
+        </ol>
+        <div class="help-tip"><strong>Once approved</strong> you will see "🎉 Sent to Faculty". No further action needed.</div>
+      </div>
+      <hr class="hdiv">
+      <div class="help-section">
+        <h3>Workflow Stages</h3>
+        <ul>
+          <li><strong>Student Responds</strong> — you are filling in responses.</li>
+          <li><strong>Supervisor Review</strong> — awaiting your supervisor.</li>
+          <li><strong>Approved</strong> — supervisor is satisfied.</li>
+          <li><strong>Faculty Received</strong> — sent to the Postgraduate Coordinator.</li>
+        </ul>
+      </div>
+    </div>
+    <div id="help-supervisor" style="display:none">
+      <div class="help-section">
+        <h3>Reviewing Student Responses</h3>
+        <ol>
+          <li><strong>Sign in</strong> with your Supervisor ID (e.g. SUP001) and password.</li>
+          <li>Students with <strong>⏳ Awaiting Review</strong> need your attention.</li>
+          <li>Click <strong>👁 Review Responses</strong> on a student card.</li>
+          <li>Read each comment alongside the student's response. Green = addressed; amber = rebuttal.</li>
+          <li>Check that a <strong>revised proposal</strong> has been uploaded — download it with the 📥 button.</li>
+          <li>If satisfied: click <strong>✓ Approve &amp; Send to Faculty</strong>. The coordinator and student are notified automatically.</li>
+          <li>If revisions needed: click <strong>↩ Return to Student</strong>, write specific feedback, click Send.</li>
+        </ol>
+        <div class="help-tip"><strong>Tip:</strong> You can return responses as many times as needed. Every round is recorded in the audit log.</div>
+      </div>
+    </div>
+    <div id="help-coord" style="display:none">
+      <div class="help-section">
+        <h3>Chair Login</h3>
+        <ol>
+          <li>Click <strong>🔑 Chair / Coord</strong> on the login screen.</li>
+          <li>Username: <strong>chair</strong> · Password: <em>[as provided]</em></li>
+          <li>Or use <strong>⚡ Quick Chair Access</strong> for demo mode.</li>
+        </ol>
+      </div>
+      <hr class="hdiv">
+      <div class="help-section">
+        <h3>Coordinator Login</h3>
+        <ol>
+          <li>Username: <strong>coord</strong> · Password: <em>[as provided]</em></li>
+          <li>You see only students whose responses have been approved by their supervisor.</li>
+        </ol>
+      </div>
+      <hr class="hdiv">
+      <div class="help-section">
+        <h3>Downloading the PDF Response Record</h3>
+        <ol>
+          <li>Find the student in the <strong>Overview</strong> tab — approved students show a green <strong>📥 PDF</strong> button.</li>
+          <li>Or open a student's detail view — a prominent <strong>📥 Download PDF</strong> banner appears at the top.</li>
+          <li>Also available in the <strong>Notifications</strong> tab next to each coordinator notification.</li>
+          <li>Clicking opens a print dialog — set <strong>Destination: Save as PDF</strong>, orientation: <strong>Landscape</strong>, click Save.</li>
+        </ol>
+        <div class="help-tip"><strong>Tip:</strong> Set margins to Minimum in the print dialog for best results.</div>
+      </div>
+      <hr class="hdiv">
+      <div class="help-section">
+        <h3>Managing Passwords</h3>
+        <ul>
+          <li>Go to the <strong>🔑 Passwords</strong> tab.</li>
+          <li>Click <strong>Reset</strong> next to any student or supervisor.</li>
+          <li>New password takes effect immediately. Share securely.</li>
+        </ul>
+      </div>
+    </div>
+    <div id="help-faq" style="display:none">
+      <div class="help-section">
+        <h3>Frequently Asked Questions</h3>
+        <p style="font-size:13px;font-weight:700;color:var(--navy-mid);margin-bottom:4px">Submit button is not working.</p>
+        <p style="font-size:13px;margin-bottom:14px;line-height:1.7">All ★ required fields (response text + location) must be complete. Incomplete fields turn red. You must also upload your revised proposal.</p>
+        <p style="font-size:13px;font-weight:700;color:var(--navy-mid);margin-bottom:4px">I closed the browser — is my work lost?</p>
+        <p style="font-size:13px;margin-bottom:14px;line-height:1.7">No. Responses save automatically as you type and on every Save Draft. They are stored in your browser and will be there when you reopen on the same device.</p>
+        <p style="font-size:13px;font-weight:700;color:var(--navy-mid);margin-bottom:4px">What is the difference between Addressed and Rebuttal?</p>
+        <p style="font-size:13px;margin-bottom:14px;line-height:1.7"><strong>Addressed</strong> = you agree and made the change. <strong>Rebuttal</strong> = you disagree and argue, with evidence, why the comment does not apply. Both require a written explanation and location reference.</p>
+        <p style="font-size:13px;font-weight:700;color:var(--navy-mid);margin-bottom:4px">How do I save as PDF — I see a print dialog?</p>
+        <p style="font-size:13px;margin-bottom:14px;line-height:1.7">In the print dialog, click the <strong>Destination</strong> dropdown and select <strong>Save as PDF</strong>. Set orientation to Landscape. Click Save.</p>
+        <p style="font-size:13px;font-weight:700;color:var(--navy-mid);margin-bottom:4px">Can I see responses on a different device?</p>
+        <p style="font-size:13px;margin-bottom:14px;line-height:1.7">Yes — all responses and uploaded proposal files are stored in the cloud and are accessible from any device. Supervisors and co-supervisors can log in from their own computers and download the revised proposal.</p>
+        <p style="font-size:13px;font-weight:700;color:var(--navy-mid);margin-bottom:4px">I forgot my password.</p>
+        <p style="font-size:13px;line-height:1.7">Contact your supervisor or the Postgraduate Coordinator. The chair can reset passwords from the 🔑 Passwords tab.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════
+const STUDENTS = {
+  "25127955":{ name:"Ms Virginia Grootboom",  password:"Groot@2026", email:"grootboombusi@gmail.com",       verdict:"Major Revisions", score:53, supervisorId:"SUP001", coSupervisorId:"COS003" },
+  "25127837":{ name:"Ms Malibongwe Wabane",   password:"Waban@2026", email:"25127837@dut4life.ac.za",       verdict:"Minor Revisions", score:78, supervisorId:"SUP001", coSupervisorId:"COS002" },
+  "25106719":{ name:"Ms Candice McCain",      password:"McCai@2026", email:"Candicem2@dut.ac.za",           verdict:"Major Revisions", score:48, supervisorId:"SUP002", coSupervisorId:"COS001" },
+  "21958855":{ name:"Ms Robyn Stander",       password:"Stand@2026", email:"21958855@dut4life.ac.za",       verdict:"Minor Revisions", score:65, supervisorId:"SUP003" },
+  "21004674":{ name:"Mr Zamani Mayeza",       password:"Mayez@2026", email:"ZamaniM@dut.ac.za",             verdict:"Minor Revisions", score:86, supervisorId:"SUP004", coSupervisorId:"COS005" },
+};
+const SUPERVISORS = {
+  "SUP001":{ name:"Prof Nokuthula Sibiya",   password:"Sup@DUT2026", email:"nokuthulas@dut.ac.za", role:"supervisor" },
+  "SUP002":{ name:"Prof. Pavitra Pillay",    password:"Sup@DUT2026", email:"Pillayp@dut.ac.za",   role:"supervisor" },
+  "SUP003":{ name:"Prof Timothy Hardcastle", password:"Sup@DUT2026", email:"Hardcastle@ukzn.ac.za",role:"supervisor" },
+  "SUP004":{ name:"Prof. F. Maruma",         password:"Sup@DUT2026", email:"MarumaF@ufs.ac.za",   role:"supervisor" },
+  "COS001":{ name:"Dr Celenkosini Nxumalo",  password:"Cos@DUT2026", email:"cnxumalo@uwc.ac.za",  role:"cosupervisor" },
+  "COS002":{ name:"Dr Sureshe Naidu",        password:"Cos@DUT2026", email:"sureshk@dut.ac.za",   role:"cosupervisor" },
+  "COS003":{ name:"Dr Nellie Naranjee",      password:"Cos@DUT2026", email:"NellieN1@dut.ac.za",  role:"cosupervisor" },
+  "COS005":{ name:"Prof Gugu Mchunu",        password:"Cos@DUT2026", email:"GuguM6@dut.ac.za",    role:"cosupervisor" },
+};
+const CHAIR = { username:"chair", password:"DUT@Chair2026" };
+const COORD = { username:"coord", password:"DUT@Coord2026", name:"Dr D. Gumede" };
+
+const COMMENTS = {
+  "25127955":[
+    {id:"c1", section:"Background & Context",       req:true,  text:"The background must move beyond a localised training gap. Frame the contribution as 'glocal' — locally grounded but theoretically applicable beyond the immediate context."},
+    {id:"c2", section:"Problem Statement",          req:true,  text:"Over-descriptive of the R425 to R171 shift. Reframe: there is no standardised, evidence-based bridge from Novice graduate to Competent PHC practitioner. Link to Universal Health Coverage."},
+    {id:"c3", section:"Study Aim",                  req:true,  text:"University frameworks are not permitted in the Faculty of Health Sciences. Revise accordingly."},
+    {id:"c4", section:"Study Objectives",           req:true,  text:"Add a final objective addressing the validation phase of the proposed framework."},
+    {id:"c5", section:"Methodology",                req:true,  text:"Miller's Pyramid is an assessment tool only. Integrate Duchscher's Transition Shock Theory (2009). Consider Benner's Novice-to-Expert Model and Meleis's Transitions Theory."},
+    {id:"c6", section:"Methodology",                req:true,  text:"Move from Convergent Mixed Methods to a Multiphase Mixed Methods Design with four phases including a Delphi validation step."},
+    {id:"c7", section:"Methodology",                req:true,  text:"Include a power analysis or statistical justification for the sample of 150 nurses."},
+    {id:"c8", section:"Originality & Significance", req:true,  text:"Explicitly define the Theory-Practice Gap as a systemic failure. Articulate the original doctoral contribution."},
+    {id:"c9", section:"Key References",             req:true,  text:"Add Duchscher (2009), Benner, and Meleis as recommended."},
+    {id:"c10",section:"Ethical Considerations",     req:false, text:"Sound. No revision required."},
+    {id:"c11",section:"Outcomes",                   req:false, text:"Well written and aligned with PhD by publication."},
+  ],
+  "25127837":[
+    {id:"c1",section:"Background & Context",       req:true,  text:"Background is embedded within the problem statement. A separate section is needed."},
+    {id:"c2",section:"Study Objectives",           req:true,  text:"Overlap between objectives 5 and 6. Merge or differentiate more clearly."},
+    {id:"c3",section:"Methodology",                req:true,  text:"Study setting described in general terms. Specify institutions, sizes, and populations served."},
+    {id:"c4",section:"Methodology",                req:true,  text:"Sampling figures of 15 and 20 stated without justification. Justify and demonstrate representativeness."},
+    {id:"c5",section:"Methodology",                req:true,  text:"No interview guide for permanent nursing staff (frontline nurses). Must be added."},
+    {id:"c6",section:"Methodology",                req:true,  text:"Inconsistency: inclusion criteria say '6 months' but participant letters say '6 years'. Resolve before submission."},
+    {id:"c7",section:"Originality & Significance", req:true,  text:"Strengthen the originality claim with an explicit comparison against closest existing studies."},
+    {id:"c8",section:"Outcomes",                   req:true,  text:"Outputs confused with outcomes. Revise to reflect tangible changes aligned with each objective."},
+    {id:"c9",section:"Key References",             req:true,  text:"Brink et al. (2018), Harvey & Land (2017), Gray & Grove (2019), Creswell et al. (2016) cited but absent. Fix all citation inconsistencies."},
+  ],
+  "25106719":[
+    {id:"c1",section:"Background & Context",       req:true,  text:"The proposal only highlights the prevalence and impact of IPV but there is insufficient interrogation of existing policies, healthcare systems, or intervention effectiveness to justify this as a doctoral study."},
+    {id:"c2",section:"Problem Statement",          req:true,  text:"The reviewers indicate this section requires substantial strengthening. No detailed comments were provided beyond the low overall rating."},
+    {id:"c3",section:"Study Aim",                  req:true,  text:"Misalignment of aims with the objectives and the methodology."},
+    {id:"c4",section:"Study Objectives",           req:true,  text:"Misalignment of aims with the objectives and the methodology."},
+    {id:"c5",section:"Methodology",                req:true,  text:"The methods are poorly aligned with the objectives. Specific concerns: (1) Restructure to illustrate the recruitment strategies and the processes involved in developing and validating the questionnaire for the quantitative phase. (2) Provide details regarding the Participatory Action Research component. (3) Clarify the exact mixed-method integration procedures. (4) Specify participant numbers per institution and the recruitment strategy. (5) Describe the intervention development framework. (6) Clarify whether 91,000–100,000 is the combined population or the size per institution. (7) The proposed randomised sampling will not be appropriate for the type of data required — purposive sampling is more suitable. (8) There is a discrepancy: staff participants are said to be selected based on institutional roles (suggesting purposive sampling), but the table for Objective 1 shows snowball sampling. This must be reconciled."},
+    {id:"c6",section:"Ethical Considerations",     req:true,  text:"The population is vulnerable; provide details on how confidentiality and anonymity will be maintained."},
+    {id:"c7",section:"Originality & Significance", req:true,  text:"The feasibility of the study needs to be revisited."},
+    {id:"c8",section:"Outcomes",                   req:false, text:"The student has noted manuscripts and conference attendance as specific outcomes."},
+    {id:"c9",section:"Key References",             req:false, text:"No detailed comments provided."},
+  ],
+  "21958855":[
+    {id:"c1",section:"Problem Statement",        req:true, text:"PCI stated as not recommended for KZN but barriers to thrombolysis not established. Make the relationship explicit."},
+    {id:"c2",section:"Study Aim",                req:true, text:"Remove 'capacitation of KZN province' — implies workshops/seminars outside study scope."},
+    {id:"c3",section:"Study Objectives",         req:true, text:"Expand to include EMCR practitioners, emergency unit doctors, and cardiologists."},
+    {id:"c4",section:"Methodology",              req:true, text:"Include emergency doctors, cardiologists, EMCR practitioners. Name the mixed methods design type explicitly. Describe the integration strategy."},
+    {id:"c5",section:"Methodology",              req:true, text:"Study 3 uses purposive sampling but participants recommend others — this is snowball sampling. Correct accordingly."},
+    {id:"c6",section:"Ethical Considerations",   req:true, text:"Expand to explicitly discuss confidentiality, beneficence, and other core ethical principles."},
+    {id:"c7",section:"Key References",           req:true, text:"Add more recent literature on prehospital thrombolysis and emergency cardiac care."},
+  ],
+  "21004674":[
+    {id:"c1",section:"Methodology",               req:true,  text:"Phenomenographic approach not clearly explained. Discuss in relation to both phases. Clarify the relationship between phenomenography and grounded theory."},
+    {id:"c2",section:"Background & Context",      req:false, text:"Comprehensive overview of UVR risks. Well done."},
+    {id:"c3",section:"Problem Statement",         req:false, text:"Gap clearly identified. No revision required."},
+    {id:"c4",section:"Study Aim",                 req:false, text:"Precisely formulated. No revision required."},
+    {id:"c5",section:"Study Objectives",          req:false, text:"Well-structured. No revision required."},
+    {id:"c6",section:"Ethical Considerations",    req:false, text:"Thoroughly addressed. No revision required."},
+    {id:"c7",section:"Originality & Significance",req:false, text:"High social and scientific value. Well argued."},
+    {id:"c8",section:"Outcomes",                  req:false, text:"Excellent mapping of articles to objectives. No revision required."},
+    {id:"c9",section:"Key References",            req:false, text:"Extensive and current. No revision required."},
+  ],
+};
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+function loadState(){
+  try{
+    // Migrate any data saved under the old pfrs_v4 key into pfrs_v5
+    const v4=localStorage.getItem('pfrs_v4');
+    const v5=localStorage.getItem('pfrs_v5');
+    if(v4 && !v5){
+      // First time opening fixed file: carry forward all previously saved data
+      localStorage.setItem('pfrs_v5', v4);
+      localStorage.removeItem('pfrs_v4');
+    }
+    return JSON.parse(localStorage.getItem('pfrs_v5')||'{}');
+  }catch{ return {}; }
+}
+function saveState(s){
+  // Files go to Firebase Storage; STATE only holds metadata + downloadURL — no base64.
+  if(window._fbReady && window._fbRef){
+    window._fbRef.set(s).catch(e=>{ console.error('[Firebase] write failed:',e); localStorage.setItem('pfrs_v5',JSON.stringify(s)); });
+  } else {
+    localStorage.setItem('pfrs_v5',JSON.stringify(s));
+  }
+}
+let STATE = loadState();
+if(!STATE.responses)    STATE.responses={};
+if(!STATE.passwords)    STATE.passwords={};
+if(!STATE.auditLog)     STATE.auditLog=[];
+if(!STATE.notifications) STATE.notifications=[];
+if(!STATE.supNotes)     STATE.supNotes={};
+function persist(){ saveState(STATE); }
+
+let currentStudent=null, currentRole=null, currentSupId=null;
+
+// ═══════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════
+function switchLoginTab(tab,btn){
+  document.querySelectorAll('#screen-login .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['student','supervisor','chair'].forEach(t=>{
+    const el=document.getElementById('login-'+t);
+    if(el) el.style.display=t===tab?'block':'none';
+  });
+}
+function clearErr(id){ const e=document.getElementById(id); if(e) e.textContent=''; }
+function setErr(id,msg){ const e=document.getElementById(id); if(e) e.textContent=msg; }
+
+function studentLogin(){
+  const sno=document.getElementById('s-number').value.trim();
+  const pwd=document.getElementById('s-password').value;
+  clearErr('err-sno'); clearErr('err-spwd');
+  if(!sno){ setErr('err-sno','Student number required.'); return; }
+  const s=STUDENTS[sno];
+  if(!s){ setErr('err-sno','Student number not found.'); return; }
+  if(pwd!==(STATE.passwords[sno]||s.password)){ setErr('err-spwd','Incorrect password.'); return; }
+  currentStudent={id:sno,...s}; currentRole='student';
+  audit('student_login',sno);
+  const stage=STATE.responses[sno]?._stage;
+  if(stage==='returned'||( stage && stage!=='draft')){ buildStatusScreen(); showScreen('submitted'); }
+  else{ buildStudentForm(); showScreen('student'); }
+}
+
+function supervisorLogin(){
+  const u=document.getElementById('sup-user').value.trim();
+  const p=document.getElementById('sup-pass').value;
+  clearErr('err-supu'); clearErr('err-supp');
+  const sup=SUPERVISORS[u];
+  if(!sup){ setErr('err-supu','Supervisor ID not found.'); return; }
+  if(p!==(STATE.passwords['_sup_'+u]||sup.password)){ setErr('err-supp','Incorrect password.'); return; }
+  currentRole = sup.role==='cosupervisor' ? 'cosupervisor' : 'supervisor';
+  currentSupId=u;
+  audit('supervisor_login',u);
+  buildSupervisorDash(); showScreen('supervisor');
+}
+
+function chairLogin(){
+  const u=document.getElementById('c-user').value.trim().toLowerCase();
+  const p=document.getElementById('c-pass').value.trim();
+  clearErr('err-cu'); clearErr('err-cp');
+  const isChair=['chair','prof','chimbari','mjc','admin'].includes(u)&&p===(STATE.passwords['_chair']||CHAIR.password);
+  const isCoord=u==='coord'&&p===(STATE.passwords['_coord']||COORD.password);
+  if(!isChair&&!isCoord){ setErr('err-cu','Credentials not recognised.'); return; }
+  currentRole=isCoord?'coordinator':'chair';
+  audit(currentRole+'_login',currentRole);
+  buildChairDash(); showScreen('chair');
+}
+
+function signOut(){
+  currentStudent=null; currentRole=null; currentSupId=null;
+  ['s-number','s-password','c-user','c-pass','sup-user','sup-pass'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  showScreen('login');
+}
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+function getProgress(id){
+  const req=(COMMENTS[id]||[]).filter(c=>c.req);
+  const done=req.filter(c=>{ const r=STATE.responses[id]?.[c.id]; return r?.text?.trim().length>3&&r?.location?.trim().length>3; });
+  return{total:req.length,done:done.length};
+}
+function ring(done,total,size=48){
+  const pct=total===0?1:done/total,r=(size-6)/2,circ=2*Math.PI*r,dash=circ*pct;
+  const col=pct===1?'var(--green)':pct>0?'var(--amber)':'var(--smoke)';
+  const tc=pct===1?'var(--green)':pct>0?'var(--amber)':'var(--muted)';
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--smoke)" stroke-width="5"/>
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${col}" stroke-width="5"
+      stroke-dasharray="${dash} ${circ}" stroke-linecap="round" transform="rotate(-90 ${size/2} ${size/2})"/>
+    <text x="${size/2}" y="${size/2+1}" text-anchor="middle" dominant-baseline="middle"
+      font-size="11" font-weight="700" fill="${tc}" font-family="monospace">${done}/${total}</text></svg>`;
+}
+function verdictChip(v){ return `<span class="chip ${v==='Major Revisions'?'chip-red':'chip-green'}">${v}</span>`; }
+function scoreChip(s){ const c=s>=75?'var(--green)':s>=60?'var(--amber)':'var(--red)'; return `<span class="chip" style="background:${c};color:#fff;font-family:monospace">${s}/100</span>`; }
+function stageChip(id){
+  const stage=STATE.responses[id]?._stage;
+  if(!stage||stage==='draft') return `<span class="chip chip-smoke">Not submitted</span>`;
+  if(stage==='submitted')     return `<span class="chip chip-amber">⏳ With supervisor</span>`;
+  if(stage==='returned')      return `<span class="chip chip-red">↩ Returned</span>`;
+  if(stage==='approved'||stage==='sent_to_coord') return `<span class="chip chip-green">✅ At faculty</span>`;
+  return '';
+}
+function wfBar(stage){
+  const steps=[{k:'draft',l:'Student\nResponds'},{k:'submitted',l:'Supervisor\nReview'},{k:'approved',l:'Approved'},{k:'sent_to_coord',l:'Faculty\nReceived'}];
+  const order={draft:0,submitted:1,returned:1,approved:2,sent_to_coord:3};
+  const cur=order[stage]||0;
+  let h=`<div class="workflow-bar">`;
+  steps.forEach((s,i)=>{
+    const cls=i<cur?'done':i===cur?'active':'pending';
+    h+=`<div class="workflow-step ${cls}">${s.l.replace('\n','<br>')}</div>`;
+    if(i<steps.length-1) h+=`<div class="workflow-arrow">›</div>`;
+  });
+  return h+`</div>`+(stage==='returned'?`<div class="banner banner-error" style="margin-top:8px">↩ Your supervisor has returned your responses for revision.</div>`:'');
+}
+function fmtSize(b){ if(b<1024) return b+'B'; if(b<1048576) return (b/1024).toFixed(1)+'KB'; return (b/1048576).toFixed(1)+'MB'; }
+function audit(a,id,d=''){ STATE.auditLog.push({ts:new Date().toISOString(),action:a,id,detail:d}); persist(); }
+
+// ═══════════════════════════════════════
+// FILE UPLOAD
+// ═══════════════════════════════════════
+let uploadedFile=null;
+function dragOver(e){ e.preventDefault(); document.getElementById('upload-drop-zone').classList.add('drag-over'); }
+function dragLeave(){ document.getElementById('upload-drop-zone').classList.remove('drag-over'); }
+function dropFile(e){ e.preventDefault(); dragLeave(); const f=e.dataTransfer.files[0]; if(f) processFile(f); }
+function handleFileSelect(input){ const f=input.files[0]; if(f) processFile(f); }
+function processFile(f){
+  const ext='.'+f.name.split('.').pop().toLowerCase();
+  if(!['.pdf','.doc','.docx','.zip'].includes(ext)){ document.getElementById('err-upload').textContent='Only PDF, Word (.docx), or ZIP accepted.'; return; }
+  if(f.size>20*1024*1024){ document.getElementById('err-upload').textContent='File exceeds 20 MB limit.'; return; }
+  document.getElementById('err-upload').textContent='';
+
+  const sid = currentStudent.id;
+  const placeholder = document.getElementById('upload-placeholder');
+  const errEl = document.getElementById('err-upload');
+
+  // Show progress
+  placeholder.innerHTML='<div style="font-size:28px;margin-bottom:6px">⏳</div><div style="font-size:14px;font-weight:700;color:var(--navy-mid)">Reading file…</div><div style="font-size:12px;color:var(--muted)" id="upload-progress">0%</div>';
+  document.getElementById('upload-drop-zone').style.pointerEvents='none';
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const dataUrl = e.target.result;
+    const base64  = dataUrl.split(',')[1];
+    const meta    = { name:f.name, size:f.size, type:f.type, mimePrefix: dataUrl.split(',')[0] };
+
+    if(window._fbReady && window._fbRef){
+      // Chunk into ~250 KB pieces and write to RTDB under files/{sid}/
+      const CHUNK = 250000;
+      const chunks = [];
+      for(let i=0; i<base64.length; i+=CHUNK) chunks.push(base64.slice(i,i+CHUNK));
+
+      const fileRef = window._fbRef.root.child('pfrs_files/' + sid);
+      // Clear any previous upload
+      fileRef.remove().then(()=>{
+        const writes = chunks.map((chunk, idx) => {
+          const prog = document.getElementById('upload-progress');
+          if(prog) prog.textContent = Math.round((idx/chunks.length)*100)+'%';
+          return fileRef.child('chunk_'+String(idx).padStart(4,'0')).set(chunk);
+        });
+        Promise.all(writes).then(()=>{
+          return fileRef.child('_meta').set(meta);
+        }).then(()=>{
+          uploadedFile = { ...meta, chunked:true, chunkCount:chunks.length };
+          if(!STATE.responses[sid]) STATE.responses[sid]={};
+          STATE.responses[sid]._uploadedFile = uploadedFile;
+          persist();
+          showFilePreview(f.name, f.size);
+          document.getElementById('upload-drop-zone').style.pointerEvents='';
+          errEl.textContent='';
+        }).catch(err=>{
+          console.error('[Upload] chunk write failed:', err);
+          errEl.textContent='Upload failed. Please try again.';
+          placeholder.innerHTML='<div style="font-size:28px;margin-bottom:6px">📄</div><div style="font-size:14px;font-weight:700;color:var(--navy-mid)">Click to browse or drag and drop</div><div style="font-size:12px;color:var(--muted)">PDF · Word · ZIP · Max 20 MB</div>';
+          document.getElementById('upload-drop-zone').style.pointerEvents='';
+        });
+      });
+    } else {
+      // Fallback: in-memory only (no Firebase)
+      uploadedFile={name:f.name,size:f.size,type:f.type,dataUrl};
+      if(!STATE.responses[sid]) STATE.responses[sid]={};
+      STATE.responses[sid]._uploadedFile={name:f.name,size:f.size,type:f.type};
+      persist();
+      showFilePreview(f.name,f.size);
+      document.getElementById('upload-drop-zone').style.pointerEvents='';
+    }
+  };
+  reader.onprogress = function(e){
+    if(e.lengthComputable){
+      const prog=document.getElementById('upload-progress');
+      if(prog) prog.textContent='Reading: '+Math.round((e.loaded/e.total)*50)+'%';
+    }
+  };
+  reader.readAsDataURL(f);
+}
+function showFilePreview(name,size){
+  const z=document.getElementById('upload-drop-zone'); z.classList.add('has-file');
+  document.getElementById('upload-placeholder').style.display='none';
+  document.getElementById('upload-preview').style.display='block';
+  document.getElementById('upload-filename').textContent=name;
+  document.getElementById('upload-filesize').textContent=fmtSize(size);
+}
+function removeFile(e){
+  e.stopPropagation();
+  const sid = currentStudent.id;
+  const fi = STATE.responses[sid]?._uploadedFile;
+  // Delete chunks from RTDB if present
+  if(fi && fi.chunked && window._fbReady && window._fbRef){
+    window._fbRef.root.child('pfrs_files/' + sid).remove().catch(()=>{});
+  }
+  uploadedFile=null;
+  if(STATE.responses[sid]) delete STATE.responses[sid]._uploadedFile;
+  persist();
+  const z=document.getElementById('upload-drop-zone'); z.classList.remove('has-file');
+  document.getElementById('upload-placeholder').innerHTML='<div style="font-size:28px;margin-bottom:6px">📄</div><div style="font-size:14px;font-weight:700;color:var(--navy-mid)">Click to browse or drag and drop</div><div style="font-size:12px;color:var(--muted)">PDF · Word · ZIP · Max 20 MB</div>';
+  document.getElementById('upload-placeholder').style.display='block';
+  document.getElementById('upload-preview').style.display='none';
+  document.getElementById('proposal-file').value='';
+}
+function restoreFile(fi){
+  if(fi){
+    uploadedFile=fi;
+    showFilePreview(fi.name, fi.size);
+  }
+}
+
+// ═══════════════════════════════════════
+// STUDENT FORM
+// ═══════════════════════════════════════
+function buildStudentForm(){
+  const s=currentStudent, p=getProgress(s.id);
+  const stage=STATE.responses[s.id]?._stage||'draft';
+  const isRevision=stage==='returned';
+  const supNote=STATE.supNotes[s.id];
+
+  document.getElementById('student-header').innerHTML=`
+    <div style="background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:0 0 20px 20px;padding:26px 24px;margin-bottom:20px;color:#fff">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <span style="font-size:10px;opacity:.5;letter-spacing:3px;text-transform:uppercase">FHS · DUT · Proposal Defence</span>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.12);color:#fff;border:none" onclick="signOut()">Sign Out</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div><h1 style="font-size:20px;margin-bottom:4px">${s.name}</h1><div style="opacity:.6;font-size:13px">No. ${s.id} · ${s.email}</div></div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">${scoreChip(s.score)} ${verdictChip(s.verdict)} ${ring(p.done,p.total)}</div>
+      </div>
+      ${isRevision&&supNote?`<div style="margin-top:12px;background:rgba(255,80,80,.15);border-radius:8px;padding:10px 14px;font-size:13px;border:1px solid rgba(255,80,80,.3)">↩ <strong>Supervisor feedback:</strong> ${supNote.note}</div>`:''}
+      <div style="margin-top:12px;background:rgba(255,255,255,.08);border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.75">
+        <strong>Instructions:</strong> Respond to every <span style="color:#E8C97A;font-weight:700">★ required</span> comment.
+        Select Addressed or Rebuttal, write your explanation, and give the exact location in your revised proposal.
+        Upload your revised proposal document below before submitting.
+      </div>
+    </div>`;
+
+  const wrap=document.getElementById('student-form');
+  wrap.innerHTML='';
+  const comments=COMMENTS[s.id]||[];
+  const saved=STATE.responses[s.id]||{};
+
+  comments.forEach((c,i)=>{
+    if(!saved[c.id]) saved[c.id]={};
+    if(c.req&&!saved[c.id].type) saved[c.id].type='addressed';
+    const r=saved[c.id];
+    const isRebut=r.type==='rebuttal';
+    const borderCol=!c.req?'var(--smoke)':(r.text&&r.location)?isRebut?'var(--amber)':'var(--green)':'var(--gold)';
+    wrap.innerHTML+=`
+    <div class="comment-block" id="cb-${c.id}" style="border-left:5px solid ${borderCol}">
+      <div class="comment-header">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="chip chip-navy">${c.section}</span>
+          ${c.req?`<span style="color:var(--gold);font-size:13px;font-weight:700">★ Response required</span>`:`<span style="color:var(--muted);font-size:12px">✓ For information only</span>`}
+          ${(r.text&&r.location&&c.req)?(!isRebut?`<span style="color:var(--green);font-size:12px;font-weight:600">✓ Done</span>`:`<span style="color:var(--amber);font-size:12px;font-weight:600">↩ Rebuttal</span>`):''}
+        </div>
+        <span style="color:var(--muted);font-size:12px">#${i+1}</span>
+      </div>
+      <div class="comment-body">${c.text}</div>
+      ${c.req?`<div class="comment-response ${isRebut?'rebut-bg':''}" id="cr-${c.id}">
+        <div class="toggle-wrap">
+          <button class="toggle-btn ${!isRebut?'active-green':''}" id="tbA-${c.id}" onclick="setType('${c.id}','addressed')">✓ I have addressed this</button>
+          <button class="toggle-btn ${isRebut?'active-amber':''}" id="tbR-${c.id}" onclick="setType('${c.id}','rebuttal')">↩ I wish to rebut this</button>
+        </div>
+        <div class="field">
+          <label id="lbl-txt-${c.id}">${isRebut?'Rebuttal — explain why this does not apply':'Your response — describe the change made'} <span style="color:var(--red)">*</span></label>
+          <textarea id="txt-${c.id}" rows="3" oninput="updateField('${c.id}','text',this.value)">${r.text||''}</textarea>
+          <div class="err-msg" id="err-txt-${c.id}"></div>
+        </div>
+        <div class="field">
+          <label id="lbl-loc-${c.id}">${isRebut?'Location where this is already addressed':'Location in revised proposal (chapter · section · page)'} <span style="color:var(--red)">*</span></label>
+          <input type="text" id="loc-${c.id}" value="${r.location||''}" oninput="updateField('${c.id}','location',this.value)"
+            placeholder="${isRebut?'e.g. Already in Chapter 3, p.10':'e.g. Chapter 2 — Methodology, p.14'}">
+          <div class="err-msg" id="err-loc-${c.id}"></div>
+        </div>
+      </div>`:''} 
+    </div>`;
+  });
+
+  // Persist defaults
+  STATE.responses[s.id]=saved; persist();
+
+  // Show upload section
+  const us=document.getElementById('upload-section'); if(us) us.style.display='block';
+  const fi=STATE.responses[s.id]?._uploadedFile; if(fi) restoreFile(fi);
+  updateActionRing();
+}
+
+function setType(cid,type){
+  if(!STATE.responses[currentStudent.id]) STATE.responses[currentStudent.id]={};
+  if(!STATE.responses[currentStudent.id][cid]) STATE.responses[currentStudent.id][cid]={};
+  STATE.responses[currentStudent.id][cid].type=type; persist();
+  const isR=type==='rebuttal';
+  document.getElementById(`tbA-${cid}`).className=`toggle-btn ${!isR?'active-green':''}`;
+  document.getElementById(`tbR-${cid}`).className=`toggle-btn ${isR?'active-amber':''}`;
+  document.getElementById(`cr-${cid}`).className=`comment-response ${isR?'rebut-bg':''}`;
+  document.getElementById(`lbl-txt-${cid}`).innerHTML=(isR?'Rebuttal — explain why this does not apply':'Your response — describe the change made')+' <span style="color:var(--red)">*</span>';
+  document.getElementById(`lbl-loc-${cid}`).innerHTML=(isR?'Location where this is already addressed':'Location in revised proposal (chapter · section · page)')+' <span style="color:var(--red)">*</span>';
+  updateBorder(cid);
+}
+function updateField(cid,field,val){
+  if(!STATE.responses[currentStudent.id]) STATE.responses[currentStudent.id]={};
+  if(!STATE.responses[currentStudent.id][cid]) STATE.responses[currentStudent.id][cid]={};
+  if(!STATE.responses[currentStudent.id][cid].type) STATE.responses[currentStudent.id][cid].type='addressed';
+  STATE.responses[currentStudent.id][cid][field]=val;
+  document.getElementById(`err-${field==='text'?'txt':'loc'}-${cid}`).textContent='';
+  persist();
+  const asi=document.getElementById('autosave-ind');
+  if(asi){asi.style.opacity='1';clearTimeout(window._asiT);window._asiT=setTimeout(()=>asi.style.opacity='0',1400);}
+  updateBorder(cid); updateActionRing();
+}
+function updateBorder(cid){
+  const r=STATE.responses[currentStudent?.id]?.[cid]||{};
+  const done=r.text?.trim().length>3&&r.location?.trim().length>3;
+  const isR=r.type==='rebuttal';
+  const col=done?(isR?'var(--amber)':'var(--green)'):'var(--gold)';
+  const el=document.getElementById(`cb-${cid}`); if(el) el.style.borderLeftColor=col;
+}
+function updateActionRing(){
+  if(!currentStudent) return;
+  const p=getProgress(currentStudent.id);
+  const el=document.getElementById('action-ring');
+  if(el) el.outerHTML=ring(p.done,p.total,44).replace('<svg','<svg id="action-ring"');
+  const lbl=document.getElementById('action-label');
+  if(lbl) lbl.innerHTML=`<b>${p.done}</b>/<b>${p.total}</b> required responses complete`+(p.done<p.total?` <span style="color:var(--red)">— all required before submission</span>`:'');
+}
+function saveDraft(){
+  persist(); audit('draft_save',currentStudent.id);
+  const b=event.target; b.textContent='✓ Saved'; setTimeout(()=>b.textContent='Save Draft',2000);
+}
+function submitResponses(){
+  const id=currentStudent.id;
+  const fi=STATE.responses[id]?._uploadedFile;
+  if(!fi&&!uploadedFile){ document.getElementById('err-upload').textContent='Please upload your revised proposal before submitting.'; document.getElementById('upload-section').scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  document.getElementById('err-upload').textContent='';
+  const required=(COMMENTS[id]||[]).filter(c=>c.req);
+  required.forEach(c=>{ if(!STATE.responses[id]) STATE.responses[id]={}; if(!STATE.responses[id][c.id]) STATE.responses[id][c.id]={}; if(!STATE.responses[id][c.id].type) STATE.responses[id][c.id].type='addressed'; });
+  let hasError=false;
+  required.forEach(c=>{
+    const r=STATE.responses[id][c.id]||{};
+    if(!r.text?.trim()){ document.getElementById(`err-txt-${c.id}`).textContent='Response required.'; document.getElementById(`txt-${c.id}`)?.classList.add('has-error'); hasError=true; }
+    else{ document.getElementById(`err-txt-${c.id}`).textContent=''; document.getElementById(`txt-${c.id}`)?.classList.remove('has-error'); }
+    if(!r.location?.trim()){ document.getElementById(`err-loc-${c.id}`).textContent='Location required.'; document.getElementById(`loc-${c.id}`)?.classList.add('has-error'); hasError=true; }
+    else{ document.getElementById(`err-loc-${c.id}`).textContent=''; document.getElementById(`loc-${c.id}`)?.classList.remove('has-error'); }
+  });
+  if(hasError){ document.querySelector('.has-error')?.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  const submittedAt=new Date().toISOString();
+  STATE.responses[id]._submittedAt=submittedAt;
+  STATE.responses[id]._stage='submitted';
+  delete STATE.responses[id]._returnedAt;
+  const sup=SUPERVISORS[currentStudent.supervisorId]||{name:'Supervisor'};
+  const p=getProgress(id);
+  const fileNote=fi?`\n\nRevised Proposal: ${fi.name} (${fmtSize(fi.size)})`:'';
+  STATE.notifications.push({id:Date.now(),type:'to_supervisor',studentId:id,studentName:currentStudent.name,supervisorId:currentStudent.supervisorId,submittedAt,
+    subject:`[FHS] ${currentStudent.name} has submitted responses for your review`,
+    body:`Dear ${sup.name},\n\n${currentStudent.name} (${id}) has submitted their proposal defence responses.\n\nResponses: ${p.done}/${p.total} completed\nSubmitted: ${new Date(submittedAt).toLocaleString('en-ZA')}${fileNote}\n\nPlease log in to review and approve or return.\n\nFHS, DUT`,
+    sentAt:new Date().toISOString()});
+  audit('student_submit',id,`${p.done}/${p.total}`); persist();
+  buildStatusScreen(); showScreen('submitted');
+}
+
+function buildStatusScreen(){
+  const id=currentStudent?.id; if(!id) return;
+  const stage=STATE.responses[id]?._stage||'draft';
+  const p=getProgress(id);
+  const ts=STATE.responses[id]?._submittedAt;
+  const icons={submitted:'⏳',approved:'✓',sent_to_coord:'🎉',returned:'↩'};
+  const bgs={submitted:getComputedStyle(document.documentElement).getPropertyValue('--amber-lt'),sent_to_coord:'var(--green-lt)',approved:'var(--green-lt)',returned:'#FEE2E2'};
+  const titles={submitted:'Submitted — Awaiting Supervisor Review',approved:'Approved by Supervisor',sent_to_coord:'Sent to Faculty',returned:'Returned for Revision'};
+  document.getElementById('status-icon').textContent=icons[stage]||'✓';
+  document.getElementById('status-icon').style.background=stage==='returned'?'#FEE2E2':'var(--green-lt)';
+  document.getElementById('status-title').textContent=titles[stage]||'Submitted';
+  document.getElementById('submit-summary').innerHTML=`You completed <strong>${p.done}</strong> of <strong>${p.total}</strong> required responses.`;
+  document.getElementById('submit-time').textContent=ts?'Submitted: '+new Date(ts).toLocaleString('en-ZA'):'';
+  document.getElementById('workflow-status-bar').innerHTML=wfBar(stage);
+  const fi=STATE.responses[id]?._uploadedFile;
+  const fb=document.getElementById('file-submitted-box');
+  if(fb){ fb.style.display=fi?'flex':'none'; if(fi){ document.getElementById('file-submitted-name').textContent=`${fi.name} (${fmtSize(fi.size)})`; } }
+  const sn=STATE.supNotes[id];
+  const rnb=document.getElementById('return-note-box'); const rb=document.getElementById('revise-btn');
+  if(stage==='returned'&&sn){ rnb.style.display='block'; document.getElementById('return-note-text').textContent=sn.note; rb.style.display='inline-block'; }
+  else{ rnb.style.display='none'; rb.style.display='none'; }
+}
+function reopenForRevision(){ if(!currentStudent) return; STATE.responses[currentStudent.id]._stage='draft'; uploadedFile=null; buildStudentForm(); showScreen('student'); }
+
+// ═══════════════════════════════════════
+// SUPERVISOR DASHBOARD
+// ═══════════════════════════════════════
+function buildSupervisorDash(){
+  const sup=SUPERVISORS[currentSupId];
+  const isCo = currentRole==='cosupervisor';
+  const mine=Object.keys(STUDENTS).filter(id=> isCo ? STUDENTS[id].coSupervisorId===currentSupId : STUDENTS[id].supervisorId===currentSupId);
+  const pending=mine.filter(id=>STATE.responses[id]?._stage==='submitted').length;
+  let html=`<div class="dash-header"><div class="flex-between" style="margin-bottom:14px">
+    <div><h1 style="font-size:22px">${isCo?'Co-Supervisor Portal':'Supervisor Portal'}</h1><p style="opacity:.6;font-size:13px">${sup.name} · ${isCo?'Read-Only View':'FHS, DUT'}</p></div>
+    <button class="btn btn-sm" style="background:rgba(255,255,255,.12);color:#fff;border:none" onclick="signOut()">Sign Out</button>
+  </div>
+  <div class="dash-stats" style="grid-template-columns:repeat(3,1fr)">
+    ${[{l:'My Students',v:mine.length,i:'🎓'},{l:'Awaiting Review',v:pending,i:'⏳'},{l:'Approved',v:mine.filter(id=>['approved','sent_to_coord'].includes(STATE.responses[id]?._stage)).length,i:'✅'}]
+      .map(x=>`<div class="stat-card"><div style="font-size:18px;margin-bottom:4px">${x.i}</div><div class="stat-val">${x.v}</div><div class="stat-label">${x.l}</div></div>`).join('')}
+  </div></div>
+  <div class="container-wide">
+    ${isCo?`<div class="banner banner-info">👁 <strong>Read-only access:</strong> You can view your student's responses but approval authority rests with the main supervisor.</div>`:''}
+    ${!isCo&&pending>0?`<div class="banner banner-warn">⏳ ${pending} student response${pending>1?'s':''} awaiting your review.</div>`:''}
+    <div style="display:grid;gap:14px">`;
+
+  mine.forEach(id=>{
+    const s=STUDENTS[id], stage=STATE.responses[id]?._stage||'draft', p=getProgress(id);
+    const ts=STATE.responses[id]?._submittedAt, isPending=stage==='submitted';
+    const fi=STATE.responses[id]?._uploadedFile;
+    const lc=isPending?'var(--amber)':stage==='sent_to_coord'?'var(--green)':stage==='returned'?'var(--red)':'var(--smoke)';
+    html+=`<div class="card" style="padding:18px 20px;border-left:5px solid ${lc}">
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        ${ring(p.done,p.total,48)}
+        <div style="flex:1"><div style="font-family:'Playfair Display';font-size:15px;font-weight:700;color:var(--navy-mid)">${s.name}</div>
+          <div class="text-muted text-small mt8">No. ${id} · ${s.email}</div>
+          ${ts?`<div style="font-size:11px;color:var(--muted);margin-top:3px">Submitted: ${new Date(ts).toLocaleString('en-ZA',{dateStyle:'medium',timeStyle:'short'})}</div>`:''}
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${scoreChip(s.score)} ${verdictChip(s.verdict)} ${stageChip(id)}</div>
+      </div>
+      ${fi?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--smoke)"><button class="btn btn-sm btn-green" onclick="downloadFile('${id}')">📥 Revised Proposal — ${fi.name}</button></div>`:''}
+      ${(!isPending && stage==='draft')?`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--smoke)">
+        <button class="btn btn-sm" style="background:var(--navy-mid);color:#fff" onclick="viewCommentsOnly('${id}')">📋 View Reviewer Comments</button>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px">Student has not yet submitted responses.</div>
+      </div>`:''}
+      ${isPending?`<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--smoke)">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <button class="btn btn-sm btn-green" onclick="reviewAndApprove('${id}')">👁 Review Responses</button>
+          ${isCo?'':`<button class="btn btn-sm btn-amber" onclick="toggleReturnForm('${id}')">↩ Return to Student</button>`}
+        </div>
+        <div id="rf-${id}" style="display:none">
+          <div class="field" style="margin-bottom:8px"><label>Feedback to student</label>
+            <textarea id="rn-${id}" rows="2" placeholder="Explain what needs to be revised..."></textarea></div>
+          <button class="btn btn-sm btn-danger" onclick="doReturn('${id}')">Send Back</button>
+          <button class="btn btn-sm btn-ghost" onclick="toggleReturnForm('${id}')" style="margin-left:6px">Cancel</button>
+        </div>
+      </div>`:''}
+      ${stage==='returned'?`<div style="margin-top:10px;padding:10px 14px;background:#FEE2E2;border-radius:8px;font-size:13px;color:var(--red)">↩ Returned: ${STATE.supNotes[id]?.note||''}</div>`:''}
+      ${stage==='sent_to_coord'?`<div style="margin-top:10px;padding:10px 14px;background:var(--green-lt);border-radius:8px;font-size:13px;color:var(--green)">🎉 Approved and sent to Postgraduate Coordinator</div>`:''}
+    </div>`;
+  });
+  html+=`</div></div>`;
+  document.getElementById('sup-content').innerHTML=html;
+}
+function toggleReturnForm(id){ const el=document.getElementById(`rf-${id}`); el.style.display=el.style.display==='none'?'block':'none'; }
+function doReturn(id){
+  const note=document.getElementById(`rn-${id}`).value.trim();
+  if(!note){ alert('Please enter feedback before returning.'); return; }
+  STATE.responses[id]._stage='returned'; STATE.responses[id]._returnedAt=new Date().toISOString();
+  STATE.supNotes[id]={note,returnedAt:new Date().toISOString()};
+  const s=STUDENTS[id];
+  STATE.notifications.push({id:Date.now(),type:'returned',studentId:id,studentName:s.name,supervisorId:currentSupId,
+    subject:`[FHS] Your responses require revision`,
+    body:`Dear ${s.name},\n\nYour supervisor has returned your responses for revision.\n\nFeedback:\n${note}\n\nPlease log in to revise and resubmit.\n\nFHS, DUT`,sentAt:new Date().toISOString()});
+  audit('supervisor_returned',id,note.substring(0,60)); persist();
+  buildSupervisorDash();
+}
+function reviewAndApprove(id){
+  const s=STUDENTS[id], sr=STATE.responses[id]||{}, p=getProgress(id), fi=sr._uploadedFile;
+  let html=`<div class="dash-header">
+    <button class="btn btn-sm" style="background:rgba(255,255,255,.12);color:#fff;border:none;margin-bottom:14px" onclick="buildSupervisorDash();showScreen('supervisor')">← Back</button>
+    <div class="flex-between"><div><h2 style="font-size:20px">${s.name}</h2><div style="opacity:.6;font-size:13px;margin-top:3px">No. ${id}</div></div>
+    <div style="display:flex;gap:10px;align-items:center">${scoreChip(s.score)} ${verdictChip(s.verdict)} ${ring(p.done,p.total)}</div></div>
+  </div>
+  <div style="max-width:860px;margin:0 auto;padding:0 16px 24px">
+    ${fi?`<div style="display:flex;align-items:center;gap:12px;background:var(--green-lt);border:1px solid var(--green);border-radius:8px;padding:12px 16px;margin-bottom:14px">
+      <span style="font-size:20px">📎</span><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--green)">Revised Proposal Attached</div><div style="font-size:12px;color:var(--muted)">${fi.name} · ${fmtSize(fi.size)}</div></div>
+      <button class="btn btn-sm btn-green" onclick="downloadFile('${id}')">📥 Download</button></div>`
+    :`<div class="banner banner-warn">⚠ No proposal uploaded by student.</div>`}
+    ${currentRole==='cosupervisor'
+      ? `<div class="banner banner-info">👁 <strong>Read-only view.</strong> You can view responses and download the proposal. To share feedback, contact the main supervisor directly.</div>`
+      : `<div class="banner banner-info">Review responses below, then approve or return.</div>
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="btn btn-green" onclick="doApprove('${id}')">✓ Approve &amp; Send to Faculty</button>
+      <button class="btn btn-amber btn-sm" onclick="toggleReturnForm2('${id}')">↩ Return to Student</button>
+    </div>`}
+    <div id="rf2-${id}" style="display:none;margin-bottom:14px"><div class="card card-pad">
+      <div class="field"><label>Feedback to student</label><textarea id="rn2-${id}" rows="3" placeholder="Explain what needs to be revised..."></textarea></div>
+      <button class="btn btn-sm btn-danger" onclick="doReturn2('${id}')">Send Back</button>
+      <button class="btn btn-sm btn-ghost" onclick="toggleReturnForm2('${id}')" style="margin-left:6px">Cancel</button>
+    </div></div>`;
+  (COMMENTS[id]||[]).forEach((c,i)=>{
+    const r=sr[c.id]||{}, hasR=r.text?.trim().length>0, reb=r.type==='rebuttal';
+    const lc=!c.req?'var(--smoke)':hasR?reb?'var(--amber)':'var(--green)':'var(--red)';
+    html+=`<div class="comment-block" style="border-left:5px solid ${lc};margin-bottom:12px">
+      <div class="comment-header"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span class="chip chip-navy">${c.section}</span>
+        ${c.req&&!hasR?`<span class="chip chip-red">⚠ No response</span>`:''}
+        ${c.req&&hasR&&!reb?`<span class="chip chip-green">✓ Addressed</span>`:''}
+        ${c.req&&hasR&&reb?`<span class="chip chip-amber">↩ Rebuttal</span>`:''}
+        ${!c.req?`<span class="text-muted text-small">Info only</span>`:''}
+      </div><span class="text-muted text-small">#${i+1}</span></div>
+      <div class="comment-body"><span style="color:var(--muted)"><strong style="color:var(--text)">Reviewer: </strong>${c.text}</span>
+        ${hasR?`<div class="response-box ${reb?'rebuttal':'addressed'}"><div class="rtype" style="color:${reb?'var(--amber)':'var(--green)'}">${reb?'↩ Rebuttal':'✓ Addressed'}</div>
+          <div class="rtext">${r.text}</div>${r.location?`<div class="rloc"><strong>Location:</strong> ${r.location}</div>`:''}</div>`:''}
+      </div></div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('sup-content').innerHTML=html;
+}
+function toggleReturnForm2(id){ const el=document.getElementById(`rf2-${id}`); el.style.display=el.style.display==='none'?'block':'none'; }
+
+function viewCommentsOnly(id){
+  const s=STUDENTS[id];
+  const cosup = s.coSupervisorId ? SUPERVISORS[s.coSupervisorId]?.name : null;
+  let html=`<div class="dash-header">
+    <button class="btn btn-sm" style="background:rgba(255,255,255,.12);color:#fff;border:none;margin-bottom:14px" onclick="buildSupervisorDash();showScreen('supervisor')">← Back</button>
+    <div class="flex-between"><div><h2 style="font-size:20px">${s.name}</h2><div style="opacity:.6;font-size:13px;margin-top:3px">No. ${id}</div></div>
+    <div style="display:flex;gap:10px;align-items:center">${scoreChip(s.score)} ${verdictChip(s.verdict)}</div></div>
+  </div>
+  <div style="max-width:860px;margin:0 auto;padding:0 16px 24px">
+    <div class="banner banner-info">📋 <strong>Reviewer comments for this student.</strong> The student has not yet submitted responses. You may use these comments to guide your student before they submit.${cosup?' Co-supervisor: '+cosup+'.':''}</div>`;
+  (COMMENTS[id]||[]).forEach((c,i)=>{
+    html+=`<div class="comment-block" style="border-left:5px solid var(--navy-mid);margin-bottom:12px">
+      <div class="comment-header"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span class="chip chip-navy">${c.section}</span>
+        ${c.req?'<span class="chip chip-red">★ Response required</span>':'<span class="text-muted text-small">Info only</span>'}
+      </div><span class="text-muted text-small">#${i+1}</span></div>
+      <div class="comment-body"><span style="color:var(--muted)"><strong style="color:var(--text)">Reviewer: </strong>${c.text}</span></div>
+    </div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('sup-content').innerHTML=html;
+  showScreen('supervisor');
+}
+function doReturn2(id){
+  const note=document.getElementById(`rn2-${id}`).value.trim();
+  if(!note){ alert('Please enter feedback before returning.'); return; }
+  STATE.responses[id]._stage='returned'; STATE.responses[id]._returnedAt=new Date().toISOString();
+  STATE.supNotes[id]={note,returnedAt:new Date().toISOString()};
+  const s=STUDENTS[id];
+  STATE.notifications.push({id:Date.now(),type:'returned',studentId:id,studentName:s.name,supervisorId:currentSupId,
+    subject:`[FHS] Your responses require revision`,body:`Dear ${s.name},\n\nFeedback:\n${note}\n\nPlease log in to revise and resubmit.\n\nFHS, DUT`,sentAt:new Date().toISOString()});
+  audit('supervisor_returned',id); persist();
+  buildSupervisorDash(); showScreen('supervisor');
+}
+function doApprove(id){
+  if(!confirm(`Approve ${STUDENTS[id].name}'s responses and send to Coordinator?`)) return;
+  const at=new Date().toISOString();
+  STATE.responses[id]._approvedAt=at; STATE.responses[id]._sentToCoordAt=at; STATE.responses[id]._stage='sent_to_coord';
+  const s=STUDENTS[id], p=getProgress(id), fi=STATE.responses[id]?._uploadedFile;
+  STATE.notifications.push({id:Date.now(),type:'to_coordinator',studentId:id,studentName:s.name,supervisorId:currentSupId,approvedAt:at,
+    subject:`[FHS] Approved responses — ${s.name} (${id})`,
+    body:`Dear ${COORD.name},\n\n${s.name} (${id}) responses approved by ${SUPERVISORS[currentSupId]?.name||'Supervisor'}.\n\nVerdict: ${s.verdict} · Score: ${s.score}/100\nResponses: ${p.done}/${p.total}\nApproved: ${new Date(at).toLocaleString('en-ZA')}${fi?'\nProposal: '+fi.name:'\nNote: No proposal uploaded.'}\n\nPlease log in to download the PDF.\n\nFHS, DUT`,
+    sentAt:new Date().toISOString()});
+  STATE.notifications.push({id:Date.now()+1,type:'approved_student',studentId:id,studentName:s.name,
+    subject:`[FHS] Your responses have been approved`,
+    body:`Dear ${s.name},\n\nYour supervisor has approved your responses. They have been sent to the Postgraduate Coordinator.\n\nApproved: ${new Date(at).toLocaleString('en-ZA')}\n\nNo further action required.\n\nFHS, DUT`,sentAt:new Date().toISOString()});
+  audit('supervisor_approved',id); persist();
+  alert(`✓ ${s.name}'s responses approved and sent to Coordinator.`);
+  buildSupervisorDash(); showScreen('supervisor');
+}
+function downloadFile(id){
+  const fi=STATE.responses[id]?._uploadedFile;
+  if(!fi){ alert('No file uploaded for this student.'); return; }
+
+  if(fi.chunked && window._fbReady && window._fbRef){
+    // Reassemble chunks from RTDB
+    const btn = event?.target;
+    if(btn){ btn.textContent='⏳ Loading…'; btn.disabled=true; }
+    const fileRef = window._fbRef.root.child('pfrs_files/' + id);
+    fileRef.once('value').then(snap=>{
+      const data = snap.val();
+      if(!data){ alert('File not found on server.'); if(btn){btn.textContent='📥 Download';btn.disabled=false;} return; }
+      // Reassemble in order
+      const keys = Object.keys(data).filter(k=>k.startsWith('chunk_')).sort();
+      const base64 = keys.map(k=>data[k]).join('');
+      const meta = data._meta || fi;
+      const dataUrl = (meta.mimePrefix||'data:application/octet-stream;base64') + ',' + base64;
+      const a=document.createElement('a'); a.href=dataUrl; a.download=meta.name||fi.name;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      audit('file_download',id,fi.name);
+      if(btn){btn.textContent='📥 Download';btn.disabled=false;}
+    }).catch(err=>{
+      console.error('[Download] failed:', err);
+      alert('Download failed. Please try again.');
+      if(btn){btn.textContent='📥 Download';btn.disabled=false;}
+    });
+  } else if(fi.downloadURL){
+    // Firebase Storage URL (future use)
+    const a=document.createElement('a'); a.href=fi.downloadURL; a.download=fi.name; a.target='_blank';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    audit('file_download',id,fi.name);
+  } else if(fi.dataUrl){
+    // Legacy in-memory fallback
+    const a=document.createElement('a'); a.href=fi.dataUrl; a.download=fi.name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    audit('file_download',id,fi.name);
+  } else {
+    alert('File not available. The student may need to re-upload.');
+  }
+}
+
+// ═══════════════════════════════════════
+// CHAIR / COORD DASHBOARD
+// ═══════════════════════════════════════
+function buildChairDash(){
+  const isCoord=currentRole==='coordinator';
+  const all=Object.keys(STUDENTS);
+  document.getElementById('chair-title').textContent=isCoord?`${COORD.name} — Coordinator Dashboard`:'Chair Review Dashboard';
+  const stats=[
+    {l:'Students',v:all.length,i:'🎓'},
+    {l:'At Faculty',v:all.filter(id=>STATE.responses[id]?._stage==='sent_to_coord').length,i:'✅'},
+    {l:'With Supervisor',v:all.filter(id=>STATE.responses[id]?._stage==='submitted').length,i:'⏳'},
+    {l:'Notifications',v:STATE.notifications.filter(n=>n.type==='to_coordinator').length,i:'✉'},
+  ];
+  document.getElementById('chair-stats').innerHTML=stats.map(x=>`<div class="stat-card"><div style="font-size:18px;margin-bottom:4px">${x.i}</div><div class="stat-val">${x.v}</div><div class="stat-label">${x.l}</div></div>`).join('');
+  const tabs=isCoord?[['overview','📊 Overview'],['notifications','✉ Notifications'],['audit','📋 Audit Log']]
+    :[['overview','📊 Overview'],['notifications','✉ Notifications'],['credentials','🔑 Passwords'],['audit','📋 Audit Log']];
+  document.getElementById('chair-tab-bar').innerHTML=tabs.map(([t,l],i)=>`<button class="tab-btn ${i===0?'active':''}" onclick="switchChairTab('${t}',this)">${l}</button>`).join('');
+  renderChairTab('overview');
+}
+function switchChairTab(tab,btn){ document.querySelectorAll('#screen-chair .tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderChairTab(tab); }
+function renderChairTab(tab){
+  const el=document.getElementById('chair-tab-content'); el.innerHTML='';
+  const all=Object.keys(STUDENTS); const isCoord=currentRole==='coordinator';
+  if(tab==='overview'){
+    el.innerHTML=`<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap" id="filter-wrap">
+      ${[['all','All'],['sent_to_coord','At Faculty'],['submitted','With Supervisor'],['returned','Returned'],['none','Not Submitted']]
+        .map(([v,l])=>`<button onclick="applyFilter('${v}',this)" class="fbtn" style="padding:7px 14px;border-radius:20px;border:2px solid var(--smoke);background:#fff;color:var(--muted);cursor:pointer;font-size:13px;font-family:'Source Serif 4'">${l}</button>`).join('')}
+    </div><div id="student-list"></div>`;
+    applyFilter('all',document.querySelector('.fbtn'));
+  }
+  if(tab==='notifications'){
+    const ns=isCoord?STATE.notifications.filter(n=>n.type==='to_coordinator'):STATE.notifications;
+    if(!ns.length){ el.innerHTML=`<div style="text-align:center;padding:60px;color:var(--muted)"><div style="font-size:36px;margin-bottom:12px">✉</div><h3>No notifications yet</h3></div>`; return; }
+    el.innerHTML=[...ns].reverse().map(n=>{
+      const tc={to_supervisor:'chip-amber',to_coordinator:'chip-green',returned:'chip-red',approved_student:'chip-green'}[n.type]||'chip-smoke';
+      const tl={to_supervisor:'→ Supervisor',to_coordinator:'→ Coordinator',returned:'↩ Returned',approved_student:'✓ → Student'}[n.type]||n.type;
+      return `<div class="card" style="padding:16px 20px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <div><div style="font-family:'Playfair Display';font-size:14px;font-weight:700;color:var(--navy-mid)">${n.studentName||''}</div><div class="text-muted text-small">${new Date(n.sentAt).toLocaleString('en-ZA')}</div></div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <span class="chip ${tc}">${tl}</span>
+            ${n.type==='to_coordinator'&&n.studentId?`<button class="btn btn-sm btn-green" onclick="generatePDF('${n.studentId}')">📥 PDF</button>`:''}
+          </div>
+        </div>
+        <div style="background:var(--paper);border-radius:8px;padding:12px 14px;border:1px solid var(--smoke)">
+          <p style="font-size:13px;font-weight:700;margin-bottom:6px">${n.subject}</p>
+          <pre style="font-size:12px;color:var(--muted);line-height:1.8;white-space:pre-wrap;font-family:'Source Serif 4'">${n.body}</pre>
+        </div></div>`;
+    }).join('');
+  }
+  if(tab==='credentials'&&!isCoord){
+    el.innerHTML=`<div class="banner banner-info">Passwords are stored in browser local storage. Share securely.</div><div id="cred-list"></div>`;
+    const w=document.getElementById('cred-list');
+    w.innerHTML+=`<div style="font-size:13px;font-weight:700;color:var(--navy-mid);margin:16px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--smoke);text-transform:uppercase;letter-spacing:.5px">Students</div>`;
+    Object.entries(STUDENTS).forEach(([id,s])=>{
+      w.innerHTML+=`<div class="card" style="padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="flex:1"><div style="font-family:'Playfair Display';font-size:13px;font-weight:700;color:var(--navy-mid)">${s.name}</div><div class="text-muted text-small">No. ${id} &nbsp;·&nbsp; Supervisor: ${SUPERVISORS[s.supervisorId]?.name||'—'}${s.coSupervisorId?' &nbsp;|&nbsp; Co-sup: '+SUPERVISORS[s.coSupervisorId]?.name:''}</div></div>
+        <code style="background:var(--paper);padding:3px 8px;border-radius:5px;font-size:12px;border:1px solid var(--smoke)">${STATE.passwords[id]||s.password}</code>
+        <button class="btn btn-ghost btn-sm" onclick="showPwdBox('${id}')">Reset</button>
+        <div id="pb-${id}" style="display:none;width:100%;margin-top:8px;display:none">
+          <div style="display:flex;gap:6px"><input id="pi-${id}" type="text" placeholder="New password" style="border:1.5px solid var(--smoke);border-radius:6px;padding:7px 10px;font-size:13px;font-family:monospace;outline:none;flex:1">
+            <button class="btn btn-primary btn-sm" onclick="savePwd('${id}')">Save</button>
+            <button class="btn btn-ghost btn-sm" onclick="hidePwdBox('${id}')">✕</button>
+          </div>
+        </div>
+      </div>`;
+    });
+    w.innerHTML+=`<div style="font-size:13px;font-weight:700;color:var(--navy-mid);margin:20px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--smoke);text-transform:uppercase;letter-spacing:.5px">Supervisors</div>`;
+    Object.entries(SUPERVISORS).forEach(([sid,s])=>{
+      const k='_sup_'+sid;
+      w.innerHTML+=`<div class="card" style="padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="flex:1"><div style="font-family:'Playfair Display';font-size:13px;font-weight:700;color:var(--navy-mid)">${s.name}</div><div class="text-muted text-small">${sid}</div></div>
+        <code style="background:var(--paper);padding:3px 8px;border-radius:5px;font-size:12px;border:1px solid var(--smoke)">${STATE.passwords[k]||s.password}</code>
+        <button class="btn btn-ghost btn-sm" onclick="showPwdBox('${k}')">Reset</button>
+        <div id="pb-${k}" style="display:none;width:100%;margin-top:8px">
+          <div style="display:flex;gap:6px"><input id="pi-${k}" type="text" placeholder="New password" style="border:1.5px solid var(--smoke);border-radius:6px;padding:7px 10px;font-size:13px;font-family:monospace;outline:none;flex:1">
+            <button class="btn btn-primary btn-sm" onclick="savePwd('${k}')">Save</button>
+            <button class="btn btn-ghost btn-sm" onclick="hidePwdBox('${k}')">✕</button>
+          </div>
+        </div>
+      </div>`;
+    });
+  }
+  if(tab==='audit'){
+    if(!STATE.auditLog.length){ el.innerHTML=`<div style="text-align:center;padding:48px;color:var(--muted)"><h3>No audit events yet.</h3></div>`; return; }
+    el.innerHTML=`<div class="card" style="overflow:hidden"><table class="data-table"><thead><tr><th>Timestamp</th><th>Action</th><th>User</th><th>Detail</th></tr></thead><tbody>
+      ${[...STATE.auditLog].reverse().map(e=>`<tr>
+        <td style="font-family:monospace;font-size:12px;white-space:nowrap">${new Date(e.ts).toLocaleString('en-ZA',{dateStyle:'short',timeStyle:'medium'})}</td>
+        <td><span class="chip ${e.action.includes('submit')||e.action.includes('approv')?'chip-green':e.action.includes('login')?'chip-navy':e.action.includes('return')?'chip-red':'chip-amber'}">${e.action.replace(/_/g,' ')}</span></td>
+        <td style="font-family:monospace;font-size:12px">${e.id}</td><td class="text-muted">${e.detail||'—'}</td></tr>`).join('')}
+    </tbody></table></div>`;
+  }
+}
+function applyFilter(filter,btn){
+  document.querySelectorAll('.fbtn').forEach(b=>{b.style.background='#fff';b.style.color='var(--muted)';b.style.borderColor='var(--smoke)';});
+  btn.style.background='var(--navy-mid)'; btn.style.color='#fff'; btn.style.borderColor='var(--navy-mid)';
+  const w=document.getElementById('student-list'); w.innerHTML='';
+  Object.entries(STUDENTS).forEach(([id,s])=>{
+    const stage=STATE.responses[id]?._stage||'draft', p=getProgress(id), ts=STATE.responses[id]?._submittedAt;
+    if(filter==='sent_to_coord'&&stage!=='sent_to_coord') return;
+    if(filter==='submitted'&&stage!=='submitted') return;
+    if(filter==='returned'&&stage!=='returned') return;
+    if(filter==='none'&&ts) return;
+    const atFaculty=stage==='sent_to_coord';
+    w.innerHTML+=`<div class="student-item" onclick="viewDetail('${id}')">
+      ${ring(p.done,p.total,52)}
+      <div style="flex:1"><div style="font-family:'Playfair Display';font-size:15px;font-weight:700;color:var(--navy-mid)">${s.name}</div>
+        <div class="text-muted text-small mt8">No. ${id} · ${s.email}</div>
+        <div style="font-size:12px;color:var(--navy-mid);margin-top:3px">👨‍🏫 ${SUPERVISORS[s.supervisorId]?.name||'—'}</div>
+        ${s.coSupervisorId?`<div style="font-size:12px;color:var(--muted);margin-top:2px">👁 Co-supervisor: ${SUPERVISORS[s.coSupervisorId]?.name||'—'}</div>`:''}
+        ${ts?`<div style="font-size:11px;color:var(--muted);margin-top:3px">Submitted: ${new Date(ts).toLocaleString('en-ZA',{dateStyle:'medium',timeStyle:'short'})}</div>`:''}
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        ${scoreChip(s.score)} ${verdictChip(s.verdict)} ${stageChip(id)}
+        ${atFaculty?`<button class="btn btn-sm btn-green" onclick="event.stopPropagation();generatePDF('${id}')">📥 PDF</button>`:''}
+        <span style="color:var(--muted);font-size:18px">›</span>
+      </div>
+    </div>`;
+  });
+}
+function showPwdBox(id){ document.getElementById(`pb-${id}`).style.display='block'; }
+function hidePwdBox(id){ document.getElementById(`pb-${id}`).style.display='none'; }
+function savePwd(id){
+  const v=document.getElementById(`pi-${id}`).value;
+  if(!v||v.length<4){ alert('Min 4 characters.'); return; }
+  STATE.passwords[id]=v; audit('pwd_reset','chair',id); persist(); hidePwdBox(id); renderChairTab('credentials');
+}
+function viewDetail(id){
+  const s=STUDENTS[id], sr=STATE.responses[id]||{}, p=getProgress(id), stage=sr._stage||'draft';
+  const fi=sr._uploadedFile, sn=STATE.supNotes[id];
+  const req=(COMMENTS[id]||[]).filter(c=>c.req);
+  const done=req.filter(c=>sr[c.id]?.text?.trim()).length;
+  const reb=req.filter(c=>sr[c.id]?.type==='rebuttal').length;
+  let html=`<div class="dash-header">
+    <button class="btn btn-sm" style="background:rgba(255,255,255,.12);color:#fff;border:none;margin-bottom:14px" onclick="buildChairDash();showScreen('chair')">← Dashboard</button>
+    <div class="flex-between">
+      <div><h2 style="font-size:20px">${s.name}</h2><div style="opacity:.6;font-size:13px;margin-top:3px">No. ${id} · ${s.email}</div>
+        ${sr._submittedAt?`<div style="opacity:.5;font-size:11px;margin-top:2px">Submitted: ${new Date(sr._submittedAt).toLocaleString('en-ZA')}</div>`:''}
+        ${sr._approvedAt?`<div style="opacity:.5;font-size:11px;margin-top:2px">Approved: ${new Date(sr._approvedAt).toLocaleString('en-ZA')}</div>`:''}
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">${scoreChip(s.score)} ${verdictChip(s.verdict)} ${stageChip(id)} ${ring(p.done,p.total)}</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      ${[{l:`${req.length} Required`,c:'rgba(255,255,255,.15)'},{l:`${done-reb} Addressed`,c:'#2D7A4F'},{l:`${reb} Rebuttals`,c:'#8B4A0A'},{l:`${req.length-done} Pending`,c:req.length-done>0?'#922020':'#2D7A4F'}]
+        .map(x=>`<div style="background:${x.c};border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;color:#fff">${x.l}</div>`).join('')}
+    </div>
+  </div>
+  <div style="max-width:860px;margin:0 auto;padding:0 16px 64px">
+    ${stage==='sent_to_coord'?`<div style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,var(--navy),var(--navy-mid));border-radius:10px;padding:16px 20px;margin-bottom:16px;color:#fff">
+      <span style="font-size:28px">📄</span>
+      <div style="flex:1"><div style="font-size:15px;font-weight:700;margin-bottom:3px">PDF Response Record Ready</div><div style="opacity:.65;font-size:13px">${s.name} · Click to generate and save as PDF</div></div>
+      <button class="btn" style="background:var(--gold);color:var(--navy);border:none;font-weight:700" onclick="generatePDF('${id}')">📥 Download PDF</button>
+    </div>`:''}
+    ${wfBar(stage)}
+    ${fi?`<div style="display:flex;align-items:center;gap:12px;background:var(--green-lt);border:1px solid var(--green);border-radius:8px;padding:12px 16px;margin-bottom:14px">
+      <span>📎</span><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--green)">Revised Proposal</div><div style="font-size:12px;color:var(--muted)">${fi.name} · ${fmtSize(fi.size)}</div></div>
+      <button class="btn btn-sm btn-green" onclick="downloadFile('${id}')">📥 Download</button></div>`
+    :`<div class="banner banner-warn">⚠ No proposal document uploaded.</div>`}
+    ${sn?`<div class="banner banner-warn"><strong>Supervisor note:</strong> ${sn.note}</div>`:''}`;
+  (COMMENTS[id]||[]).forEach((c,i)=>{
+    const r=sr[c.id]||{}, hasR=r.text?.trim().length>0, reb=r.type==='rebuttal';
+    const lc=!c.req?'var(--smoke)':hasR?reb?'var(--amber)':'var(--green)':'var(--red)';
+    html+=`<div class="comment-block" style="border-left:5px solid ${lc};margin-bottom:12px">
+      <div class="comment-header"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span class="chip chip-navy">${c.section}</span>
+        ${c.req&&!hasR?`<span class="chip chip-red">⚠ No response</span>`:''}
+        ${c.req&&hasR&&!reb?`<span class="chip chip-green">✓ Addressed</span>`:''}
+        ${c.req&&hasR&&reb?`<span class="chip chip-amber">↩ Rebuttal</span>`:''}
+        ${!c.req?`<span class="text-muted text-small">Info only</span>`:''}
+      </div><span class="text-muted text-small">#${i+1}</span></div>
+      <div class="comment-body"><span style="color:var(--muted)"><strong style="color:var(--text)">Reviewer: </strong>${c.text}</span>
+        ${hasR?`<div class="response-box ${reb?'rebuttal':'addressed'}"><div class="rtype" style="color:${reb?'var(--amber)':'var(--green)'}">${reb?'↩ Rebuttal':'✓ Addressed'}</div>
+          <div class="rtext">${r.text}</div>${r.location?`<div class="rloc"><strong>Location:</strong> ${r.location}</div>`:''}</div>`:''}
+      </div></div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('detail-content').innerHTML=html;
+  showScreen('detail');
+}
+
+// ═══════════════════════════════════════
+// PDF GENERATOR
+// ═══════════════════════════════════════
+function generatePDF(studentId){
+  const btn=event?.target;
+  if(btn){btn.textContent='⏳ Preparing...';btn.disabled=true;}
+  const s=STUDENTS[studentId], comments=COMMENTS[studentId]||[], responses=STATE.responses[studentId]||{};
+  const req=comments.filter(c=>c.req);
+  const addressed=req.filter(c=>responses[c.id]?.type==='addressed').length;
+  const rebutted=req.filter(c=>responses[c.id]?.type==='rebuttal').length;
+  const incomplete=req.filter(c=>!responses[c.id]?.text?.trim()).length;
+  const dateStr=new Date().toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'});
+  const vc=s.verdict==="Major Revisions"?"#C0392B":"#1A6B3A";
+  const ap=responses._approvedAt?new Date(responses._approvedAt).toLocaleString('en-ZA'):'Yes — approved';
+  const rows=comments.map((c,i)=>{
+    const r=responses[c.id]||{};
+    const st=r.type==='addressed'?{t:"✓ Addressed",c:"#1A6B3A"}:r.type==='rebuttal'?{t:"↩ Rebuttal",c:"#B7600A"}:c.req?{t:"— Incomplete",c:"#C0392B"}:{t:"Info only",c:"#888"};
+    const rt=r.text?.trim()||( c.req?"<em style='color:#C0392B'>[No response entered]</em>":"—");
+    const rl=r.location?.trim()||(c.req?"<em style='color:#C0392B'>[No location given]</em>":"—");
+    const bg=i%2===0?"#fff":"#F7F7F7";
+    const rb=r.type==='addressed'?"#E8F5EC":r.type==='rebuttal'?"#FEF3E2":c.req?"#FDE8E6":bg;
+    return `<tr>
+      <td style="background:${bg};text-align:center;font-weight:700;color:#1F3864">${i+1}</td>
+      <td style="background:${bg}"><strong style="color:#1F3864;font-size:11px">${c.section}</strong><br><span style="font-size:10px;color:${c.req?'#C9971C':'#888'};font-weight:${c.req?700:400}">${c.req?'★ Required':'Info only'}</span></td>
+      <td style="background:${bg};font-size:11px">${c.text}</td>
+      <td style="background:${rb};font-size:11px"><strong style="color:${st.c};font-size:10px">${st.t}</strong><br>${rt}</td>
+      <td style="background:${bg};font-size:10px">${rl}</td></tr>`;
+  }).join('');
+
+  const printHTML=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Response Record — ${s.name}</title>
+<style>
+@page{size:A4 landscape;margin:12mm;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Calibri,Arial,sans-serif;font-size:12px;color:#1A1510;background:#fff;}
+h1{font-size:18px;color:#1F3864;margin-bottom:4px;}
+h2{font-size:13px;color:#2E5096;margin:14px 0 6px;border-bottom:2px solid #C9971C;padding-bottom:3px;}
+.sub{font-size:11px;color:#666;margin-bottom:12px;}
+.rule{border:none;border-top:3px solid #C9971C;margin-bottom:12px;}
+.info{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.info td{padding:5px 8px;font-size:11px;border:1px solid #ddd;}
+.info .lbl{background:#F2F2F2;font-weight:700;color:#1F3864;width:11%;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.stat{border-radius:6px;padding:7px 10px;text-align:center;}
+.stat .v{font-size:22px;font-weight:700;font-family:monospace;}
+.stat .l{font-size:10px;margin-top:2px;}
+.note{border-left:4px solid #C9971C;padding:5px 10px;background:#FFFDF5;font-size:10px;color:#555;margin-bottom:12px;font-style:italic;}
+table.rt{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:11px;}
+table.rt th{background:#1F3864;color:#fff;padding:6px 8px;text-align:left;font-size:10px;}
+table.rt td{padding:6px 8px;border-bottom:1px solid #E0E0E0;vertical-align:top;line-height:1.5;}
+col.no{width:3%;}col.sec{width:13%;}col.cmt{width:30%;}col.rsp{width:35%;}col.loc{width:19%;}
+.sig{width:100%;border-collapse:collapse;margin-top:10px;}
+.sig td{border:1px solid #ddd;padding:10px 12px;width:33.33%;background:#F9F9F9;vertical-align:top;font-size:11px;}
+.ft{font-size:9px;color:#aaa;text-align:center;margin-top:10px;border-top:1px solid #eee;padding-top:5px;}
+</style></head><body>
+<h1>Proposal Defence — Reviewer Response Record</h1>
+<div class="sub">Faculty of Health Sciences · Durban University of Technology · ${dateStr}</div>
+<hr class="rule">
+<table class="info">
+<tr><td class="lbl">Student</td><td>${s.name}</td><td class="lbl">Student No.</td><td style="font-family:monospace">${studentId}</td><td class="lbl">Score</td><td><strong>${s.score}/100</strong></td></tr>
+<tr><td class="lbl">Supervisor</td><td>${s.supervisor||SUPERVISORS[s.supervisorId]?.name||'—'}</td><td class="lbl">Verdict</td><td style="color:${vc};font-weight:700">${s.verdict}</td><td class="lbl">Approved</td><td>${ap}</td></tr>
+      <tr><td class="lbl">Co-Supervisor</td><td>${s.coSupervisorId?SUPERVISORS[s.coSupervisorId]?.name||'—':'—'}</td><td class="lbl"></td><td></td><td class="lbl"></td><td></td></tr>
+</table>
+<div class="stats">
+<div class="stat" style="background:#EEF4FF"><div class="v" style="color:#1F3864">${req.length}</div><div class="l" style="color:#555">Required</div></div>
+<div class="stat" style="background:#E8F5EC"><div class="v" style="color:#1A6B3A">${addressed}</div><div class="l" style="color:#1A6B3A">Addressed</div></div>
+<div class="stat" style="background:#FEF3E2"><div class="v" style="color:#B7600A">${rebutted}</div><div class="l" style="color:#B7600A">Rebuttals</div></div>
+<div class="stat" style="background:${incomplete>0?'#FDE8E6':'#E8F5EC'}"><div class="v" style="color:${incomplete>0?'#C0392B':'#1A6B3A'}">${incomplete}</div><div class="l" style="color:${incomplete>0?'#C0392B':'#1A6B3A'}">Incomplete</div></div>
+</div>
+<div class="note">Each row = one reviewer comment and the student's response. ★ Required comments demand a substantive response. Location references point to the revised proposal.</div>
+<h2>Comment-by-Comment Response Table</h2>
+<table class="rt"><colgroup><col class="no"><col class="sec"><col class="cmt"><col class="rsp"><col class="loc"></colgroup>
+<thead><tr><th>#</th><th>Section</th><th>Reviewer Comment</th><th>Student Response</th><th>Location in Proposal</th></tr></thead>
+<tbody>${rows}</tbody></table>
+<h2>For FRC Use</h2>
+<table class="sig"><tr>
+<td><strong style="color:#1F3864">FRC Reviewer</strong><div style="margin-top:20px;font-size:10px;color:#888">Signature / Date: ___________________________</div></td>
+<td><strong style="color:#1F3864">Supervisor Endorsement</strong><div style="margin-top:20px;font-size:10px;color:#888">Signature / Date: ___________________________</div></td>
+<td><strong style="color:#1F3864">FRC Decision</strong><div style="margin-top:14px;font-size:12px">☐ &nbsp;Approved &nbsp;&nbsp;&nbsp;&nbsp; ☐ &nbsp;Further revisions required</div></td>
+</tr></table>
+<div class="ft">Faculty of Health Sciences, Durban University of Technology · Proposal Defence Feedback Response System · Confidential</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// FIREBASE REALTIME DATABASE — dut-fhs-pfrs
+// ═══════════════════════════════════════════════════════
+const _fbConfig = {
+  apiKey:            "AIzaSyCh3H896T6FgDorIqhYFrF1WfxvILsnaKI",
+  authDomain:        "dut-fhs-pfrs.firebaseapp.com",
+  databaseURL:       "https://dut-fhs-pfrs-default-rtdb.firebaseio.com",
+  projectId:         "dut-fhs-pfrs",
+  storageBucket:     "dut-fhs-pfrs.firebasestorage.app",
+  messagingSenderId: "92977936067",
+  appId:             "1:92977936067:web:e4c266c8913d7b6731d476"
+};
+
+const DB_PATH = 'pfrs_fhs_2026';
+window._fbReady = false;
+window._fbRef   = null;
+
+try {
+  if (!firebase.apps.length) firebase.initializeApp(_fbConfig);
+  window._fbRef   = firebase.database().ref(DB_PATH);
+  window._fbReady = true;
+
+  // ── Migrate any existing localStorage data to Firebase once
+  const localRaw = localStorage.getItem('pfrs_v5') || localStorage.getItem('pfrs_v4');
+  if (localRaw) {
+    window._fbRef.once('value').then(snap => {
+      if (!snap.val()) {
+        try {
+          window._fbRef.set(JSON.parse(localRaw)).then(() => {
+            localStorage.removeItem('pfrs_v5');
+            localStorage.removeItem('pfrs_v4');
+            console.log('[Firebase] Local data migrated to cloud');
+          });
+        } catch(e) { console.warn('[Firebase] Migration parse error', e); }
+      } else {
+        localStorage.removeItem('pfrs_v5');
+        localStorage.removeItem('pfrs_v4');
+      }
+    });
+  }
+
+  // ── Real-time listener: sync STATE across all users instantly
+  window._fbRef.on('value', snap => {
+    const d = snap.val();
+    if (!d) return;
+    if (!d.responses)     d.responses     = {};
+    if (!d.passwords)     d.passwords     = {};
+    if (!d.auditLog)      d.auditLog      = [];
+    if (!d.notifications) d.notifications = [];
+    if (!d.supNotes)      d.supNotes      = {};
+    STATE = d;
+
+    // Refresh whichever screen is currently active
+    try {
+      if (currentRole === 'supervisor') buildSupervisorDash();
+    } catch(e){}
+    try {
+      if (currentRole === 'chair' || currentRole === 'coord') renderChairTab();
+    } catch(e){}
+    try {
+      const subScreen = document.getElementById('screen-submitted');
+      if (subScreen && subScreen.classList.contains('active') && currentStudent)
+        buildStatusScreen(currentStudent.id);
+    } catch(e){}
+  }, err => {
+    console.error('[Firebase] Listener error:', err);
+  });
+
+  console.log('[Firebase] Connected ✅ — real-time sync active on dut-fhs-pfrs');
+
+} catch(e) {
+  console.warn('[Firebase] Init failed, falling back to localStorage:', e);
+  window._fbReady = false;
+}
+</script>
+
+`;
+
+  const win=window.open('','_blank','width=1000,height=700');
+  if(!win){ alert('Please allow popups for this page to download the PDF.'); if(btn){btn.textContent='📥 Download PDF';btn.disabled=false;} return; }
+  win.document.write(printHTML);
+  win.document.close();
+  setTimeout(()=&gt;win.print(),400);
+  audit('pdf_download',studentId,s.name);
+  if(btn){setTimeout(()=&gt;{btn.textContent='📥 Download PDF';btn.disabled=false;},2000);}
+}
+
+// ═══════════════════════════════════════
+// HELP
+// ═══════════════════════════════════════
+function openHelp(){ document.getElementById('help-panel').classList.add('open'); document.getElementById('help-overlay').classList.add('open'); }
+function closeHelp(){ document.getElementById('help-panel').classList.remove('open'); document.getElementById('help-overlay').classList.remove('open'); }
+function switchHelpTab(tab,btn){
+  document.querySelectorAll('.help-tab').forEach(b=&gt;b.classList.remove('active')); btn.classList.add('active');
+  ['student','supervisor','coord','faq'].forEach(t=&gt;{const e=document.getElementById('help-'+t);if(e)e.style.display=t===tab?'block':'none';});
+}
+
+// ═══════════════════════════════════════
+// KEYBOARD
+// ═══════════════════════════════════════
+document.addEventListener('keydown',e=&gt;{
+  if(e.key==='Enter'&amp;&amp;document.getElementById('screen-login').classList.contains('active')){
+    if(document.getElementById('login-student').style.display!=='none') studentLogin();
+    else if(document.getElementById('login-supervisor').style.display!=='none') supervisorLogin();
+    else chairLogin();
+  }
+});
+
+
+<script>
+<script>
+// ═══════════════════════════════════════════════════════
+// FIREBASE REALTIME DATABASE + STORAGE — dut-fhs-pfrs  [FIXED v3]
+// ═══════════════════════════════════════════════════════
+const _fbConfig = {
+  apiKey:            "AIzaSyCh3H896T6FgDorIqhYFrF1WfxvILsnaKI",
+  authDomain:        "dut-fhs-pfrs.firebaseapp.com",
+  databaseURL:       "https://dut-fhs-pfrs-default-rtdb.firebaseio.com",
+  projectId:         "dut-fhs-pfrs",
+  storageBucket:     "dut-fhs-pfrs.firebasestorage.app",
+  messagingSenderId: "92977936067",
+  appId:             "1:92977936067:web:e4c266c8913d7b6731d476"
+};
+
+const DB_PATH = 'pfrs_fhs_2026';
+window._fbReady   = false;
+window._fbRef     = null;
+
+try {
+  if (!firebase.apps.length) firebase.initializeApp(_fbConfig);
+  window._fbRef     = firebase.database().ref(DB_PATH);
+  window._fbReady   = true;
+
+  // ── Migrate any existing localStorage data to Firebase once
+  const localRaw = localStorage.getItem('pfrs_v5') || localStorage.getItem('pfrs_v4');
+  if (localRaw) {
+    window._fbRef.once('value').then(snap => {
+      if (!snap.val()) {
+        try {
+          // Strip any old dataUrl blobs before migrating (they won't fit in RTDB)
+          const parsed = JSON.parse(localRaw);
+          Object.keys(parsed.responses||{}).forEach(sid=>{
+            const r = parsed.responses[sid];
+            if(r && r._uploadedFile && r._uploadedFile.dataUrl){
+              // Keep only metadata; dataUrl cannot be migrated to RTDB
+              parsed.responses[sid]._uploadedFile = { name:r._uploadedFile.name, size:r._uploadedFile.size, type:r._uploadedFile.type };
+            }
+          });
+          window._fbRef.set(parsed).then(() => {
+            localStorage.removeItem('pfrs_v5');
+            localStorage.removeItem('pfrs_v4');
+            console.log('[Firebase] Local data migrated to cloud');
+          }).catch(e=>console.error('[Firebase] Migration write failed:',e));
+        } catch(e) { console.warn('[Firebase] Migration parse error', e); }
+      } else {
+        localStorage.removeItem('pfrs_v5');
+        localStorage.removeItem('pfrs_v4');
+      }
+    });
+  }
+
+  // ── Real-time listener: sync STATE across all users instantly
+  window._fbRef.on('value', snap => {
+    const d = snap.val();
+    if (!d) return;
+    if (!d.responses)     d.responses     = {};
+    if (!d.passwords)     d.passwords     = {};
+    if (!d.auditLog)      d.auditLog      = [];
+    if (!d.notifications) d.notifications = [];
+    if (!d.supNotes)      d.supNotes      = {};
+    STATE = d;
+
+    // Refresh whichever screen is currently active
+    try {
+      if (currentRole === 'supervisor') buildSupervisorDash();
+    } catch(e){}
+    try {
+      if (currentRole === 'chair' || currentRole === 'coord') renderChairTab();
+    } catch(e){}
+    try {
+      const subScreen = document.getElementById('screen-submitted');
+      if (subScreen && subScreen.classList.contains('active') && currentStudent)
+        buildStatusScreen(currentStudent.id);
+    } catch(e){}
+  }, err => {
+    console.error('[Firebase] Listener error:', err);
+  });
+
+  console.log('[Firebase] Connected ✅ — Realtime DB + Storage active [FIXED v3]');
+
+} catch(e) {
+  console.warn('[Firebase] Init failed, falling back to localStorage:', e);
+  window._fbReady = false;
+}
+</script>
+
+
+
+</body></html>
