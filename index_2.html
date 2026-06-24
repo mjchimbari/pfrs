@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- PFRS-FIXED-V3-FINAL -->
 <!-- saved from url=(0060)file:///C:/Users/chimbari/Downloads/pfrs_firebase_final.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
@@ -562,7 +561,8 @@ function supervisorLogin(){
   clearErr('err-supu'); clearErr('err-supp');
   const sup=SUPERVISORS[u];
   if(!sup){ setErr('err-supu','Supervisor ID not found.'); return; }
-  if(p!==(STATE.passwords['_sup_'+u]||sup.password)){ setErr('err-supp','Incorrect password.'); return; }
+  const expP=(STATE&&STATE.passwords&&STATE.passwords['_sup_'+u])||sup.password;
+  if(p!==expP){ setErr('err-supp','Incorrect password.'); return; }
   currentRole = sup.role==='cosupervisor' ? 'cosupervisor' : 'supervisor';
   currentSupId=u;
   audit('supervisor_login',u);
@@ -573,8 +573,8 @@ function chairLogin(){
   const u=document.getElementById('c-user').value.trim().toLowerCase();
   const p=document.getElementById('c-pass').value.trim();
   clearErr('err-cu'); clearErr('err-cp');
-  const isChair=['chair','prof','chimbari','mjc','admin'].includes(u)&&p===(STATE.passwords['_chair']||CHAIR.password);
-  const isCoord=u==='coord'&&p===(STATE.passwords['_coord']||COORD.password);
+  const isChair=['chair','prof','chimbari','mjc','admin'].includes(u)&&p===((STATE&&STATE.passwords&&STATE.passwords['_chair'])||CHAIR.password);
+  const isCoord=u==='coord'&&p===((STATE&&STATE.passwords&&STATE.passwords['_coord'])||COORD.password);
   if(!isChair&&!isCoord){ setErr('err-cu','Credentials not recognised.'); return; }
   currentRole=isCoord?'coordinator':'chair';
   audit(currentRole+'_login',currentRole);
@@ -1002,7 +1002,7 @@ function reviewAndApprove(id){
       ? `<div class="banner banner-info">👁 <strong>Read-only view.</strong> You can view responses and download the proposal. To share feedback, contact the main supervisor directly.</div>`
       : `<div class="banner banner-info">Review responses below, then approve or return.</div>
     <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-      <button class="btn btn-green" onclick="doApprove('${id}')">✓ Approve &amp; Send to Faculty</button>
+      <button class="btn btn-green" onclick="doApprove('${id}')">✓ Approve & Send to Faculty</button>
       <button class="btn btn-amber btn-sm" onclick="toggleReturnForm2('${id}')">↩ Return to Student</button>
     </div>`}
     <div id="rf2-${id}" style="display:none;margin-bottom:14px"><div class="card card-pad">
@@ -1178,7 +1178,7 @@ function renderChairTab(tab){
     w.innerHTML+=`<div style="font-size:13px;font-weight:700;color:var(--navy-mid);margin:16px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--smoke);text-transform:uppercase;letter-spacing:.5px">Students</div>`;
     Object.entries(STUDENTS).forEach(([id,s])=>{
       w.innerHTML+=`<div class="card" style="padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-        <div style="flex:1"><div style="font-family:'Playfair Display';font-size:13px;font-weight:700;color:var(--navy-mid)">${s.name}</div><div class="text-muted text-small">No. ${id} &nbsp;·&nbsp; Supervisor: ${SUPERVISORS[s.supervisorId]?.name||'—'}${s.coSupervisorId?' &nbsp;|&nbsp; Co-sup: '+SUPERVISORS[s.coSupervisorId]?.name:''}</div></div>
+        <div style="flex:1"><div style="font-family:'Playfair Display';font-size:13px;font-weight:700;color:var(--navy-mid)">${s.name}</div><div class="text-muted text-small">No. ${id}  ·  Supervisor: ${SUPERVISORS[s.supervisorId]?.name||'—'}${s.coSupervisorId?'  |  Co-sup: '+SUPERVISORS[s.coSupervisorId]?.name:''}</div></div>
         <code style="background:var(--paper);padding:3px 8px;border-radius:5px;font-size:12px;border:1px solid var(--smoke)">${STATE.passwords[id]||s.password}</code>
         <button class="btn btn-ghost btn-sm" onclick="showPwdBox('${id}')">Reset</button>
         <div id="pb-${id}" style="display:none;width:100%;margin-top:8px;display:none">
@@ -1379,7 +1379,7 @@ col.no{width:3%;}col.sec{width:13%;}col.cmt{width:30%;}col.rsp{width:35%;}col.lo
 <table class="sig"><tr>
 <td><strong style="color:#1F3864">FRC Reviewer</strong><div style="margin-top:20px;font-size:10px;color:#888">Signature / Date: ___________________________</div></td>
 <td><strong style="color:#1F3864">Supervisor Endorsement</strong><div style="margin-top:20px;font-size:10px;color:#888">Signature / Date: ___________________________</div></td>
-<td><strong style="color:#1F3864">FRC Decision</strong><div style="margin-top:14px;font-size:12px">☐ &nbsp;Approved &nbsp;&nbsp;&nbsp;&nbsp; ☐ &nbsp;Further revisions required</div></td>
+<td><strong style="color:#1F3864">FRC Decision</strong><div style="margin-top:14px;font-size:12px">☐  Approved      ☐  Further revisions required</div></td>
 </tr></table>
 <div class="ft">Faculty of Health Sciences, Durban University of Technology · Proposal Defence Feedback Response System · Confidential</div>
 
@@ -1389,9 +1389,9 @@ col.no{width:3%;}col.sec{width:13%;}col.cmt{width:30%;}col.rsp{width:35%;}col.lo
   if(!win){ alert('Please allow popups for this page to download the PDF.'); if(btn){btn.textContent='📥 Download PDF';btn.disabled=false;} return; }
   win.document.write(printHTML);
   win.document.close();
-  setTimeout(()=&gt;win.print(),400);
+  setTimeout(()=>win.print(),400);
   audit('pdf_download',studentId,s.name);
-  if(btn){setTimeout(()=&gt;{btn.textContent='📥 Download PDF';btn.disabled=false;},2000);}
+  if(btn){setTimeout(()=>{btn.textContent='📥 Download PDF';btn.disabled=false;},2000);}
 }
 
 // ═══════════════════════════════════════
@@ -1400,15 +1400,15 @@ col.no{width:3%;}col.sec{width:13%;}col.cmt{width:30%;}col.rsp{width:35%;}col.lo
 function openHelp(){ document.getElementById('help-panel').classList.add('open'); document.getElementById('help-overlay').classList.add('open'); }
 function closeHelp(){ document.getElementById('help-panel').classList.remove('open'); document.getElementById('help-overlay').classList.remove('open'); }
 function switchHelpTab(tab,btn){
-  document.querySelectorAll('.help-tab').forEach(b=&gt;b.classList.remove('active')); btn.classList.add('active');
-  ['student','supervisor','coord','faq'].forEach(t=&gt;{const e=document.getElementById('help-'+t);if(e)e.style.display=t===tab?'block':'none';});
+  document.querySelectorAll('.help-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  ['student','supervisor','coord','faq'].forEach(t=>{const e=document.getElementById('help-'+t);if(e)e.style.display=t===tab?'block':'none';});
 }
 
 // ═══════════════════════════════════════
 // KEYBOARD
 // ═══════════════════════════════════════
-document.addEventListener('keydown',e=&gt;{
-  if(e.key==='Enter'&amp;&amp;document.getElementById('screen-login').classList.contains('active')){
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('screen-login').classList.contains('active')){
     if(document.getElementById('login-student').style.display!=='none') studentLogin();
     else if(document.getElementById('login-supervisor').style.display!=='none') supervisorLogin();
     else chairLogin();
